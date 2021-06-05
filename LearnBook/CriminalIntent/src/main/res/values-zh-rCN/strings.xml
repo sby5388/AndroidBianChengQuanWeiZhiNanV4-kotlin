@@ -4,4 +4,5 @@
     <string name="crime_title_label">标题</string>
     <string name="crime_details_label">详情</string>
     <string name="crime_solved_label">已解决</string>
+    <string name="call_police">联系警方</string>
 </resources>
