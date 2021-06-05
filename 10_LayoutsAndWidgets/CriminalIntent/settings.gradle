@@ -1,0 +1,2 @@
+rootProject.name = "chap10 LayoutsAndWidgets CriminalIntent"
+include ':app'
