@@ -1,0 +1,2 @@
+rootProject.name="chap7 AndroidVersion GeoQuiz"
+include ':app'
