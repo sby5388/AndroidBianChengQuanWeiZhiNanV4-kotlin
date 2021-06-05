@@ -1,0 +1,2 @@
+rootProject.name = "chap9 RecyclerView CriminalIntent"
+include ':app'
