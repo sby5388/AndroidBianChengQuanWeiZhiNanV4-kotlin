@@ -8,6 +8,11 @@ import androidx.lifecycle.ViewModel
  */
 private const val TAG = "QuizViewModel"
 
+/**
+ * max cheat count
+ */
+private const val MAX_CHEAT_COUNT = 3
+
 class QuizViewModel : ViewModel() {
     init {
         Log.d(TAG, "QuizViewModel instance created")
@@ -16,6 +21,12 @@ class QuizViewModel : ViewModel() {
     var mCurrentIndex = 0
     var mCount = 0
     var mCountRight = 0
+
+    /**
+     * current cheat count
+     */
+    private var mCountCheat = 0
+
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
@@ -40,7 +51,12 @@ class QuizViewModel : ViewModel() {
     }
 
     fun setCurrentQuestionCheat(cheat: Boolean) {
-        questionBank[mCurrentIndex].cheat = cheat
+        if (questionBank[mCurrentIndex].cheat != cheat) {
+            questionBank[mCurrentIndex].cheat = cheat
+            if (cheat) {
+                mCountCheat++
+            }
+        }
     }
 
     val questionSize: Int
@@ -58,6 +74,9 @@ class QuizViewModel : ViewModel() {
 
     val currentQuestionCheat: Boolean
         get() = questionBank[mCurrentIndex].cheat
+
+    val canCheat: Boolean
+        get() = mCountCheat < MAX_CHEAT_COUNT
 
     fun moveToNext() {
         mCurrentIndex = (mCurrentIndex + 1) % questionBank.size

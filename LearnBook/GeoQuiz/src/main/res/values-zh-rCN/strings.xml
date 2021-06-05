@@ -17,5 +17,6 @@
     <string name="show_answer_button">显示答案</string>
     <string name="cheat_button">作弊!</string>
     <string name="judgment_toast">作弊是不正确.</string>
+    <string name="system_version">系统版本 %d</string>
 
 </resources>

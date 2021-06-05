@@ -1,7 +1,9 @@
 package com.by5388.learn.v4.kotlin.geoquiz
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 
@@ -93,8 +96,8 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.moveToPre()
             updateQuestion()
         }
-        mButtonCheat.setOnClickListener {
-            toCheatActivity()
+        mButtonCheat.setOnClickListener { view ->
+            toCheatActivity(view)
         }
     }
 
@@ -111,9 +114,10 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_CHEAT) {
             val cheat = CheatActivity.getShowAnswer(data)
             if (cheat) {
-                //只要作弊了就不会重新更改未未作弊
+                //只要作弊了就不会重新更改为未作弊
                 mQuizViewModel.setCurrentQuestionCheat(true)
             }
+            updateQuestion()
         }
     }
 
@@ -124,6 +128,7 @@ class MainActivity : AppCompatActivity() {
 
         mButtonFalse.isEnabled = !mQuizViewModel.currentQuestionCheck
         mButtonTrue.isEnabled = !mQuizViewModel.currentQuestionCheck
+        mButtonCheat.isEnabled = mQuizViewModel.canCheat
     }
 
 
@@ -153,14 +158,25 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun toCheatActivity() {
-        mQuizViewModel.currentQuestionAnswer
+    private fun toCheatActivity(view: View) {
         val newIntent = CheatActivity.newIntent(this, mQuizViewModel.currentQuestionAnswer)
-        startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val options = ActivityOptions
+                .makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+            startActivityForResult(newIntent, REQUEST_CODE_CHEAT, options.toBundle())
+        } else {
+            startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
+        }
     }
 
-    private fun toCheatActivity2() {
-        mQuizViewModel.currentQuestionAnswer
+    private fun toCheatActivityCompat(view: View) {
+        val newIntent = CheatActivity.newIntent(this, mQuizViewModel.currentQuestionAnswer)
+        val optionsCompat =
+            ActivityOptionsCompat.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
+        startActivityForResult(newIntent, REQUEST_CODE_CHEAT, optionsCompat.toBundle())
+    }
+
+    private fun toCheatActivity2(view: View) {
         val newIntent = CheatActivity.newIntent(
             this@MainActivity, mQuizViewModel.currentQuestionAnswer
         )

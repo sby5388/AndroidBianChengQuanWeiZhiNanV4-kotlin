@@ -3,6 +3,7 @@ package com.by5388.learn.v4.kotlin.geoquiz
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -16,6 +17,7 @@ private const val KEY_CHEAT = "cheat"
 
 class CheatActivity : AppCompatActivity() {
     private lateinit var mAnswerTextView: TextView
+    private lateinit var mSystemVersionTextView: TextView
     private lateinit var mShowAnswerButton: Button
 
     /**
@@ -36,6 +38,9 @@ class CheatActivity : AppCompatActivity() {
         mAnswerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
         mAnswerTextView = findViewById(R.id.answer_text_view)
         mShowAnswerButton = findViewById(R.id.show_answer_button)
+
+        mSystemVersionTextView = findViewById(R.id.show_system_version)
+        mSystemVersionTextView.text = getString(R.string.system_version, Build.VERSION.SDK_INT)
 
         mShowAnswerButton.setOnClickListener {
             val answerText = when {
