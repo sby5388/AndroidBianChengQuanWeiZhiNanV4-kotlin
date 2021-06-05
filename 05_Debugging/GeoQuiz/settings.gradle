@@ -1,0 +1,2 @@
+rootProject.name = "chap5 Debugging GeoQuiz"
+include ':app'
