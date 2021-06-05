@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">地理测试</string>
+    <string name="question_australia">堪培拉是澳大利亚的首都。</string>
+    <string name="question_oceans">太平洋比大西洋面积大。</string>
+    <string name="question_mideast">苏伊士运河连接红海和印度洋。</string>
+    <string name="question_africa">尼罗河的源头在埃及。</string>
+    <string name="question_americas">最长的河流是在美洲的亚马逊河。</string>
+    <string name="question_asia">贝加尔湖是世界上最深和最古老的淡水湖。</string>
+    <string name="true_button">正确</string>
+    <string name="false_button">错误</string>
+    <string name="next_button">下一个</string>
+    <string name="correct_toast">答案正确!</string>
+    <string name="incorrect_toast">答案错误!</string>
+
+    <string name="warning_text">你确定要这样做吗？</string>
+    <string name="show_answer_button">显示答案</string>
+    <string name="cheat_button">作弊!</string>
+    <string name="judgment_toast">作弊是不正确.</string>
+
+</resources>

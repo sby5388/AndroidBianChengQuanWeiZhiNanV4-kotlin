@@ -7,4 +7,5 @@ import androidx.annotation.StringRes
  */
 data class Question(@StringRes val textResId: Int, val answer: Boolean) {
     var check: Boolean = false
+    var cheat: Boolean = false
 }

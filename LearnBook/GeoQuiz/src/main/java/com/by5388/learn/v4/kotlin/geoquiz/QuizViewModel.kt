@@ -39,6 +39,10 @@ class QuizViewModel : ViewModel() {
         questionBank[mCurrentIndex].check = true
     }
 
+    fun setCurrentQuestionCheat(cheat: Boolean) {
+        questionBank[mCurrentIndex].cheat = cheat
+    }
+
     val questionSize: Int
         get() = questionBank.size
 
@@ -51,6 +55,9 @@ class QuizViewModel : ViewModel() {
 
     val currentQuestionCheck: Boolean
         get() = questionBank[mCurrentIndex].check
+
+    val currentQuestionCheat: Boolean
+        get() = questionBank[mCurrentIndex].cheat
 
     fun moveToNext() {
         mCurrentIndex = (mCurrentIndex + 1) % questionBank.size

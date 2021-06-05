@@ -1,5 +1,7 @@
 package com.by5388.learn.v4.kotlin.geoquiz
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,10 +15,12 @@ import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
+private const val REQUEST_CODE_CHEAT = 0
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mButtonTrue: Button
     private lateinit var mButtonFalse: Button
+    private lateinit var mButtonCheat: Button
     private lateinit var mButtonNext: ImageButton
     private lateinit var mButtonPre: ImageButton
     private lateinit var mQuestionTextView: TextView
@@ -49,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         mButtonTrue = findViewById(R.id.true_button)
         mButtonFalse = findViewById(R.id.false_button)
+        mButtonCheat = findViewById(R.id.cheat_button)
         mButtonNext = findViewById(R.id.next_button)
         mButtonPre = findViewById(R.id.pre_button)
         mQuestionTextView = findViewById(R.id.question_text_view)
@@ -88,11 +93,28 @@ class MainActivity : AppCompatActivity() {
             quizViewModel.moveToPre()
             updateQuestion()
         }
+        mButtonCheat.setOnClickListener {
+            toCheatActivity()
+        }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState.putInt(KEY_INDEX, mQuizViewModel.mCurrentIndex)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            val cheat = CheatActivity.getShowAnswer(data)
+            if (cheat) {
+                //只要作弊了就不会重新更改未未作弊
+                mQuizViewModel.setCurrentQuestionCheat(true)
+            }
+        }
     }
 
 
@@ -109,12 +131,14 @@ class MainActivity : AppCompatActivity() {
         mQuizViewModel.setCurrentQuestionCheck()
         mQuizViewModel.addCount()
         val answer = mQuizViewModel.currentQuestionAnswer
-        val messageResId = if (userAnswer == answer) {
-            mQuizViewModel.addCountRight()
-            //最后一行是返回值
-            R.string.correct_toast
-        } else {
-            R.string.incorrect_toast
+        val messageResId: Int = when {
+            mQuizViewModel.currentQuestionCheat -> R.string.judgment_toast
+            (userAnswer == answer) -> {
+                mQuizViewModel.addCountRight()
+                //最后一行是返回值
+                R.string.correct_toast
+            }
+            else -> R.string.incorrect_toast
         }
         updateQuestion()
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
@@ -127,6 +151,20 @@ class MainActivity : AppCompatActivity() {
             ).show()
         }
 
+    }
+
+    private fun toCheatActivity() {
+        mQuizViewModel.currentQuestionAnswer
+        val newIntent = CheatActivity.newIntent(this, mQuizViewModel.currentQuestionAnswer)
+        startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
+    }
+
+    private fun toCheatActivity2() {
+        mQuizViewModel.currentQuestionAnswer
+        val newIntent = CheatActivity.newIntent(
+            this@MainActivity, mQuizViewModel.currentQuestionAnswer
+        )
+        startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
     }
 
     /**

@@ -16,21 +16,37 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal">
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/true_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/true_button" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/true_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/true_button" />
+
+            <Button
+                android:id="@+id/false_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/false_button" />
+
+        </LinearLayout>
 
         <Button
-            android:id="@+id/false_button"
+            android:id="@+id/cheat_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/false_button" />
-
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/cheat_button" />
     </LinearLayout>
+
 
     <ImageButton
         android:id="@+id/pre_button"
