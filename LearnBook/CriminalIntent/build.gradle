@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -15,6 +16,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //todo fix "chema export directory is not provided to the annotation processor so we cannot export the schema.
+        //  You can either provide `room.schemaLocation` annotation processor argument OR set exportSchema to false.
+        //  public abstract class CrimeDatabase extends androidx.room.RoomDatabase {"
+        // https://stackoverflow.com/questions/44322178/room-schema-export-directory-is-not-provided-to-the-annotation-processor-so-we
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -41,6 +52,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.room:room-runtime:2.1.0'
+    kapt 'androidx.room:room-compiler:2.1.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

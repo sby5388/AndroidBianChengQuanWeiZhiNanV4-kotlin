@@ -25,15 +25,10 @@ private const val TYPE_UN_SOLVED = 1
 class CrimeListFragment : Fragment() {
 
     private lateinit var mRecyclerView: RecyclerView
-    private var mAdapter: CrimeAdapter? = null
+    private var mAdapter: CrimeAdapter? = CrimeAdapter(emptyList())
 
     private val mCrimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: Total Crimes = ${mCrimeListViewModel.mCrimes.size}")
     }
 
     override fun onCreateView(
@@ -48,12 +43,18 @@ class CrimeListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
         mRecyclerView.layoutManager = LinearLayoutManager(context)
-        updateUI()
+        mRecyclerView.adapter = mAdapter
+        mCrimeListViewModel.mCrimesListLiveData
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { crimes ->
+                crimes?.let {
+                    Log.d(TAG, "onViewCreated: crimes.size = ${crimes.size}")
+                    updateUI(crimes)
+                }
+            })
     }
 
-
-    private fun updateUI() {
-        mAdapter = CrimeAdapter(mCrimeListViewModel.mCrimes)
+    private fun updateUI(crimes: List<Crime>) {
+        mAdapter = CrimeAdapter(crimes)
         mRecyclerView.adapter = mAdapter
     }
 

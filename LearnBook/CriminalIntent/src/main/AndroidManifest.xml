@@ -3,6 +3,7 @@
     package="com.by5388.learn.v4.kotlin.criminalintent">
 
     <application
+        android:name=".CriminalIntentApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
