@@ -5,13 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * @author  admin  on 2021/6/5.
@@ -89,23 +91,25 @@ class CrimeListFragment : Fragment() {
 
         init {
             itemView.setOnClickListener(this)
-            var callButton = itemView.findViewById(R.id.button_call_police) as Button?
-            callButton?.setOnClickListener(this)
+            var imageView = itemView.findViewById(R.id.imageView) as ImageView?
+            imageView?.setOnClickListener(this)
         }
 
         private lateinit var mCrime: Crime
         private val mTitleTextView: TextView = view.findViewById(R.id.crime_title)
         private val mDateTextView: TextView = view.findViewById(R.id.crime_date)
+        private val mDateFormat =
+            SimpleDateFormat(context?.getString(R.string.date_format), Locale.getDefault())
 
         fun bind(crime: Crime) {
             this.mCrime = crime
             mTitleTextView.text = mCrime.title
-            mDateTextView.text = mCrime.date.toString()
+            mDateTextView.text = mDateFormat.format(mCrime.date)
         }
 
         override fun onClick(v: View?) {
             val id = v?.id
-            if (id == R.id.button_call_police) {
+            if (id == R.id.imageView) {
                 Toast.makeText(
                     context,
                     "${mCrime.title} ${resources.getString(R.string.call_police)}",
