@@ -1,5 +1,7 @@
 package com.by5388.learn.v4.kotlin.criminalintent
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,9 +21,12 @@ import java.util.*
 /**
  * @author  admin  on 2021/6/5.
  */
+private const val TAG = "CrimeFragment"
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_CODE_DATE = 1
 private const val ARG_CRIME_ID = "crime_id"
 
-class CrimeFragment : Fragment() {
+class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
     private lateinit var mCrime: Crime
     private lateinit var mTitleField: EditText
@@ -32,6 +37,11 @@ class CrimeFragment : Fragment() {
 
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
+    }
+
+    override fun onDateSelected(date: Date) {
+        mCrime.date = date
+        updateUI()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +72,15 @@ class CrimeFragment : Fragment() {
 
         mDateButton.apply {
             text = mDateFormat.format(mCrime.date)
-            isEnabled = false
+            setOnClickListener {
+                DatePickerFragment.newInstance(mCrime.date).apply {
+                    setTargetFragment(this@CrimeFragment, REQUEST_CODE_DATE)
+                    show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+                }
+            }
         }
+
+
 
         mCrimeDetailViewModel.mCrimeLiveData
             .observe(viewLifecycleOwner,
@@ -96,6 +113,13 @@ class CrimeFragment : Fragment() {
             setOnCheckedChangeListener { _, isChecked ->
                 mCrime.isSolved = isChecked
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_DATE && resultCode == Activity.RESULT_OK) {
+            // TODO: 2021/6/6
         }
     }
 
