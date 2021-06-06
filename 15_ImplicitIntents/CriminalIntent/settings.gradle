@@ -1,0 +1,2 @@
+rootProject.name = "chap15 ImplicitIntents CriminalIntent"
+include ':app'
