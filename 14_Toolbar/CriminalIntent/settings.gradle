@@ -1,0 +1,2 @@
+rootProject.name = "chap14 Toolbar CriminalIntent"
+include ':app'
