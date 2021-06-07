@@ -7,4 +7,22 @@
     <string name="call_police">Call Police</string>
     <string name="date_format">EEEE,yyyy/MM/dd  HH:mm:ss</string>
     <string name="new_crime">New Crime</string>
+    <string name="crime_suspect_text">Choose Suspect</string>
+    <string name="crime_report_text">Send Crime Report</string>
+    <string name="crime_report">
+        %1$s!The crime was discovered on %2$s,%3$s,%4$s
+    </string>
+    <string name="crime_report_solved">The case is solved</string>
+    <string name="crime_report_unsolved">The case is not solved</string>
+    <string name="crime_report_no_suspect">there is no suspect.</string>
+    <string name="crime_report_suspect">the suspect is %s.</string>
+    <string name="crime_report_subject">CriminalIntent Crime Report</string>
+    <string name="send_report">Send crime report via</string>
+    <string name="crime_call">Call Phone</string>
+    <string name="no_found_dialer">NoFoundDialer</string>
+    <string name="tip_permission_read_contact">Need Read Contacts Permission to get phoneNumber</string>
+    <string name="user_granted_permission">User Granted</string>
+    <string name="user_cancel">User Cancel</string>
+    <string name="user_refuse">User Refuse and not ask anymore</string>
+
 </resources>

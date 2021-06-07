@@ -7,4 +7,23 @@
     <string name="call_police">联系警方</string>
     <string name="date_format">yyyy/MM/dd  HH:mm:ss</string>
     <string name="new_crime">新建</string>
+    <string name="crime_suspect_text">选取嫌疑人</string>
+    <string name="crime_report_text">发送犯罪报告</string>
+    <string name="crime_report">
+        %1$s!这个陋习被发现在 %2$s,%3$s,%4$s
+    </string>
+    <string name="crime_report_solved">案子已经解决了</string>
+    <string name="crime_report_unsolved">没有解决</string>
+    <string name="crime_report_no_suspect">这里没有嫌疑人.</string>
+    <string name="crime_report_suspect">嫌疑人是%s.</string>
+    <string name="crime_report_subject">陋习意图 犯罪报告</string>
+    <string name="send_report">发送陋习报告</string>
+    <string name="crime_call">拨打电话</string>
+    <string name="no_found_dialer">未找到拨号器</string>
+    <string name="tip_permission_read_contact">需要读取联系人权限来获取电话号码</string>
+    <string name="user_granted_permission">用户已授权</string>
+    <string name="user_cancel">用户取消授权</string>
+    <string name="user_refuse">用户拒绝授权，且不再提示</string>
+
+
 </resources>

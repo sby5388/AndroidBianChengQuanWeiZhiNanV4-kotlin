@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.by5388.learn.v4.kotlin.criminalintent">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".CriminalIntentApplication"
         android:allowBackup="true"
