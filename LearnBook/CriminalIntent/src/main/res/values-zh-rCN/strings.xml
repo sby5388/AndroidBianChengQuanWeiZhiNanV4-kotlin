@@ -1,23 +1,23 @@
 <resources>
-    <string name="app_name">陋习意图</string>
-    <string name="crime_title_hint">为这个陋习输入一个标题</string>
+    <string name="app_name">CriminalIntent</string>
+    <string name="crime_title_hint">crime简短描述</string>
     <string name="crime_title_label">标题</string>
-    <string name="crime_details_label">详情</string>
-    <string name="crime_solved_label">已解决</string>
+    <string name="crime_details_label">明细</string>
+    <string name="crime_solved_label">是否解决</string>
     <string name="call_police">联系警方</string>
     <string name="date_format">yyyy/MM/dd  HH:mm:ss</string>
-    <string name="new_crime">新建</string>
-    <string name="crime_suspect_text">选取嫌疑人</string>
-    <string name="crime_report_text">发送犯罪报告</string>
+    <string name="new_crime">新增crime记录</string>
+    <string name="crime_suspect_text">嫌疑人联系方式</string>
+    <string name="crime_report_text">抗议或投诉</string>
     <string name="crime_report">
-        %1$s!这个陋习被发现在 %2$s,%3$s,%4$s
+        %1$s!发生于 %2$s,%3$s,%4$s
     </string>
-    <string name="crime_report_solved">案子已经解决了</string>
-    <string name="crime_report_unsolved">没有解决</string>
-    <string name="crime_report_no_suspect">这里没有嫌疑人.</string>
+    <string name="crime_report_solved">问题已解决</string>
+    <string name="crime_report_unsolved">问题未解决</string>
+    <string name="crime_report_no_suspect">没找到嫌疑人</string>
     <string name="crime_report_suspect">嫌疑人是%s.</string>
-    <string name="crime_report_subject">陋习意图 犯罪报告</string>
-    <string name="send_report">发送陋习报告</string>
+    <string name="crime_report_subject">crime处理情况报告</string>
+    <string name="send_report">投诉方式</string>
     <string name="crime_call">拨打电话</string>
     <string name="no_found_dialer">未找到拨号器</string>
     <string name="tip_permission_read_contact">需要读取联系人权限来获取电话号码</string>
