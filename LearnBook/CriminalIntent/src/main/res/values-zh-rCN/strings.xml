@@ -24,6 +24,7 @@
     <string name="user_granted_permission">用户已授权</string>
     <string name="user_cancel">用户取消授权</string>
     <string name="user_refuse">用户拒绝授权，且不再提示</string>
+    <string name="view_big_photo">查看大图</string>
 
 
 </resources>

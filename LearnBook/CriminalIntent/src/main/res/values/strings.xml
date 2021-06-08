@@ -24,5 +24,6 @@
     <string name="user_granted_permission">User Granted</string>
     <string name="user_cancel">User Cancel</string>
     <string name="user_refuse">User Refuse and not ask anymore</string>
+    <string name="view_big_photo">See Big Picture</string>
 
 </resources>

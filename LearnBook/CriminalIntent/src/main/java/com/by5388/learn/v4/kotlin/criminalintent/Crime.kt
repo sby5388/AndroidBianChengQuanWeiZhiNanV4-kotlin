@@ -2,6 +2,7 @@ package com.by5388.learn.v4.kotlin.criminalintent
 
 import androidx.annotation.NonNull
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.*
 
@@ -17,4 +18,8 @@ data class Crime(
     var date: Date = Date(),
     var suspect: String = "",
     var isSolved: Boolean = false
-)
+) {
+    //20210608 this property will not write into database
+    @Ignore
+    val photoFileName = "IMG_{$id}.jpg"
+}
