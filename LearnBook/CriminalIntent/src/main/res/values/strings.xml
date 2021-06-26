@@ -26,4 +26,10 @@
     <string name="user_refuse">User Refuse and not ask anymore</string>
     <string name="view_big_photo">See Big Picture</string>
 
+    <string name="crime_photo_button_description">Take photo of crime scene</string>
+    <string name="crime_photo_no_image_description">
+        Crime scene photo (not set)
+    </string>
+    <string name="crime_photo_image_description">Crime scene photo (set)</string>
+
 </resources>

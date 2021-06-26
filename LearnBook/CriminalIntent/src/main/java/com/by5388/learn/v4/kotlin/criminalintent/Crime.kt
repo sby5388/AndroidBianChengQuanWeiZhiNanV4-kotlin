@@ -22,4 +22,7 @@ data class Crime(
     //20210608 this property will not write into database
     @Ignore
     val photoFileName = "IMG_{$id}.jpg"
+
+    @Ignore
+    constructor() : this(UUID.randomUUID())
 }

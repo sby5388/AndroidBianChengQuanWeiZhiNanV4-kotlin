@@ -26,5 +26,10 @@
     <string name="user_refuse">用户拒绝授权，且不再提示</string>
     <string name="view_big_photo">查看大图</string>
 
+    <string name="crime_photo_button_description">陋习现场拍照按钮</string>
+    <string name="crime_photo_no_image_description">
+        陋习现场照片（未拍照）
+    </string>
+    <string name="crime_photo_image_description">陋习现场照片（已拍照）</string>
 
 </resources>

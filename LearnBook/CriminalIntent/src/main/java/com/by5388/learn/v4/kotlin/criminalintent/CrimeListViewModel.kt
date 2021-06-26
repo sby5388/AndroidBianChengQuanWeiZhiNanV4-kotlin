@@ -14,5 +14,6 @@ class CrimeListViewModel : ViewModel() {
     }
 
     fun loadData() {
+        mCrimeRepository.getCrimes()
     }
 }

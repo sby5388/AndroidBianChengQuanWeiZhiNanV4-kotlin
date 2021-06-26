@@ -4,15 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,6 +24,7 @@ private const val TYPE_EMPTY = 2
 class CrimeListFragment : Fragment() {
 
     private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mAddButton: Button
     private val mDiffCallback: DiffUtil.ItemCallback<Crime> =
         object : DiffUtil.ItemCallback<Crime>() {
             override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
@@ -50,7 +48,7 @@ class CrimeListFragment : Fragment() {
     private var mCallback: Callback? = null
 
     private val mCrimeListViewModel: CrimeListViewModel by lazy {
-        ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
+        defaultViewModelProviderFactory.create(CrimeListViewModel::class.java)
     }
 
     override fun onAttach(context: Context) {
@@ -73,19 +71,33 @@ class CrimeListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mAddButton = view.findViewById(R.id.button_add_crime)
+        mAddButton.setOnClickListener {
+            createCrime()
+        }
         mRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
+        mRecyclerView.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                DividerItemDecoration.VERTICAL
+            )
+        )
         mRecyclerView.layoutManager = LinearLayoutManager(context)
-    }
-
-    override fun onResume() {
-        super.onResume()
+        mAdapter = CrimeAdapter(mDiffCallback)
+        mRecyclerView.adapter = mAdapter
         mCrimeListViewModel.mCrimesListLiveData
             .observe(viewLifecycleOwner, androidx.lifecycle.Observer { crimes ->
                 crimes?.let {
                     Log.d(TAG, "onViewCreated: crimes.size = ${crimes.size}")
-                    updateUI2(crimes)
+                    //updateUI2(crimes)
+                    updateUI(crimes)
                 }
             })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mCrimeListViewModel.loadData()
     }
 
 
@@ -117,20 +129,21 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
+        Log.d(TAG, "updateUI: " + crimes.size)
+
         // FIXME: 2021/6/6 有一个问题没有解决：在 CrimeFragment 页面修改后，
         //  CrimeListFragment 页面无法及时刷新数据
         //mAdapter = CrimeAdapter(crimes, mDiffCallback)
         //mRecyclerView.adapter = mAdapter
-        if (mAdapter == null) {
-            Log.d(TAG, "updateUI: mAdapter == null")
-            mAdapter = CrimeAdapter(crimes, mDiffCallback)
-            mRecyclerView.adapter = mAdapter
+        mAdapter!!.submitList(crimes)
+        if (crimes.isEmpty()) {
+            mAddButton.visibility = View.VISIBLE
+            mRecyclerView.visibility = View.GONE
         } else {
-            Log.d(TAG, "updateUI: mAdapter != null")
-            mAdapter!!.submitList(crimes)
-            mRecyclerView.adapter = mAdapter
+            mAddButton.visibility = View.GONE
+            mRecyclerView.visibility = View.VISIBLE
         }
-        mAdapter?.notifyDataSetChanged()
+
     }
 
     private fun updateUI2(crimes: List<Crime>) {
@@ -151,7 +164,6 @@ class CrimeListFragment : Fragment() {
     }
 
     private inner class CrimeAdapter(
-        var crimes: List<Crime>,
         diffCallback: DiffUtil.ItemCallback<Crime>
     ) : ListAdapter<Crime, CrimeHolder>(diffCallback) {
 
@@ -173,31 +185,15 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            if (isEmpty()) {
-                return
-            }
-            holder.bind(crimes[position])
+            holder.bind(getItem(position))
         }
 
-        override fun getItemCount(): Int {
-            if (isEmpty()) {
-                return 1;
-            }
-            return crimes.size
-        }
 
         override fun getItemViewType(position: Int): Int {
-            if (isEmpty()) {
-                return TYPE_EMPTY;
-            }
-            if (crimes[position].isSolved) {
+            if (getItem(position).isSolved) {
                 return TYPE_NORMAL
             }
             return TYPE_UN_SOLVED
-        }
-
-        private fun isEmpty(): Boolean {
-            return crimes.isEmpty()
         }
     }
 

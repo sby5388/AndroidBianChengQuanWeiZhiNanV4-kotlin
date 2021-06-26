@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_crime.*
 import java.io.File
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -63,14 +62,21 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
 
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
-        ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
+        defaultViewModelProviderFactory.create(CrimeDetailViewModel::class.java)
     }
 
     private val mOnGlobalFocusChangeListener: ViewTreeObserver.OnGlobalFocusChangeListener =
         ViewTreeObserver.OnGlobalFocusChangeListener { oldFocus, newFocus ->
             mPhotoFile.let {
-                val bitmap = getScaledBitmap(it.path, mPhotoView.width, mPhotoView.height)
-                mPhotoView.setImageBitmap(bitmap)
+                val path = it.path
+                val file = File(path)
+                if(file.exists()) {
+                    val bitmap = getScaledBitmap(it.path, mPhotoView.width, mPhotoView.height)
+                    bitmap?.let {
+                        mPhotoView.setImageBitmap(bitmap)
+                    }
+
+                }
             }
         }
 
@@ -378,8 +384,10 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         if (mPhotoFile.exists()) {
             val bitmap = getScaledBitmap(mPhotoFile.path, requireActivity())
             mPhotoView.setImageBitmap(bitmap)
+            mPhotoView.contentDescription = getString(R.string.crime_photo_image_description)
         } else {
             mPhotoView.setImageBitmap(null)
+            mPhotoView.contentDescription = getString(R.string.crime_photo_no_image_description)
         }
     }
 
