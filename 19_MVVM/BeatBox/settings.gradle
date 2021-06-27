@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "chap19 MVVM BeatBox"

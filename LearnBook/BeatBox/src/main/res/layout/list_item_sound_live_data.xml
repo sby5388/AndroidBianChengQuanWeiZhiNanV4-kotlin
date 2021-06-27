@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.by5388.learn.v4.kotlin.beatbox.livedata.SoundViewModel2" />
+
+    </data>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:onClick="@{(view)->viewModel.onButtonClick(view)}"
+        android:text="@{viewModel.title}"
+        tools:text="soundName">
+
+    </Button>
+</layout>
