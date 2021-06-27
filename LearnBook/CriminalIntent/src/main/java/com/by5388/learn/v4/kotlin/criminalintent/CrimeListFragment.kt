@@ -40,11 +40,11 @@ class CrimeListFragment : Fragment() {
         }
 
     /**
-     * FIXME 20210606 使用这个ListAdapter有个致命的问题，就是首次创建Crime,然后返回CrimeListFragment会闪退
+     *  20210606 使用这个ListAdapter有个致命的问题，就是首次创建Crime,然后返回CrimeListFragment会闪退
      *  修改后的数据也没有及时更新到UI上
+     *  20210627 已修复
      */
     private var mAdapter: CrimeAdapter? = null
-    private var mAdapter2: CrimeAdapter2? = null
     private var mCallback: Callback? = null
 
     private val mCrimeListViewModel: CrimeListViewModel by lazy {
@@ -97,7 +97,7 @@ class CrimeListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        mCrimeListViewModel.loadData()
+        //mCrimeListViewModel.loadData()
     }
 
 
@@ -129,12 +129,11 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
-        Log.d(TAG, "updateUI: " + crimes.size)
+        //Log.d(TAG, "updateUI: " + crimes.size)
 
-        // FIXME: 2021/6/6 有一个问题没有解决：在 CrimeFragment 页面修改后，
+        // 2021/6/6 有一个问题没有解决：在 CrimeFragment 页面修改后，
         //  CrimeListFragment 页面无法及时刷新数据
-        //mAdapter = CrimeAdapter(crimes, mDiffCallback)
-        //mRecyclerView.adapter = mAdapter
+        // 20210627已修复
         mAdapter!!.submitList(crimes)
         if (crimes.isEmpty()) {
             mAddButton.visibility = View.VISIBLE
@@ -144,23 +143,6 @@ class CrimeListFragment : Fragment() {
             mRecyclerView.visibility = View.VISIBLE
         }
 
-    }
-
-    private fun updateUI2(crimes: List<Crime>) {
-        // FIXME: 2021/6/6 有一个问题没有解决：在 CrimeFragment 页面修改后，
-        //  CrimeListFragment 页面无法及时刷新数据
-        //mAdapter = CrimeAdapter(crimes, mDiffCallback)
-        //mRecyclerView.adapter = mAdapter
-        if (mAdapter2 == null) {
-            Log.d(TAG, "updateUI: mAdapter == null")
-            mAdapter2 = CrimeAdapter2(crimes)
-            mRecyclerView.adapter = mAdapter2
-        } else {
-            Log.d(TAG, "updateUI: mAdapter != null")
-            mAdapter2!!.crimes = crimes
-            mRecyclerView.adapter = mAdapter2
-        }
-        mAdapter2?.notifyDataSetChanged()
     }
 
     private inner class CrimeAdapter(
@@ -197,55 +179,6 @@ class CrimeListFragment : Fragment() {
         }
     }
 
-    private inner class CrimeAdapter2(
-        var crimes: List<Crime>
-    ) : RecyclerView.Adapter<CrimeHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
-            if (TYPE_EMPTY == viewType) {
-                val inflate = layoutInflater.inflate(R.layout.list_item_crime_empty, parent, false)
-                return EmptyHolder(inflate)
-            }
-
-            val itemLayout: Int = when (viewType) {
-                //handle by EmptyHolder
-                //TYPE_EMPTY -> R.layout.list_item_crime_empty
-                TYPE_UN_SOLVED -> R.layout.list_item_crime_un_solved
-                TYPE_NORMAL -> R.layout.list_item_crime
-                else -> R.layout.list_item_crime
-            }
-            val view = layoutInflater.inflate(itemLayout, parent, false)
-            return CrimeHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            if (isEmpty()) {
-                return
-            }
-            holder.bind(crimes[position])
-        }
-
-        override fun getItemCount(): Int {
-            if (isEmpty()) {
-                return 1;
-            }
-            return crimes.size
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            if (isEmpty()) {
-                return TYPE_EMPTY;
-            }
-            if (crimes[position].isSolved) {
-                return TYPE_NORMAL
-            }
-            return TYPE_UN_SOLVED
-        }
-
-        private fun isEmpty(): Boolean {
-            return crimes.isEmpty()
-        }
-    }
 
     private inner class EmptyHolder(view: View) : CrimeHolder(view) {
 
