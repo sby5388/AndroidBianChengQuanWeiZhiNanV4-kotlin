@@ -150,44 +150,12 @@ class CrimeListFragment : Fragment() {
     ) : ListAdapter<Crime, CrimeHolder>(diffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
-            if (TYPE_EMPTY == viewType) {
-                val inflate = layoutInflater.inflate(R.layout.list_item_crime_empty, parent, false)
-                return EmptyHolder(inflate)
-            }
-
-            val itemLayout: Int = when (viewType) {
-                //handle by EmptyHolder
-                //TYPE_EMPTY -> R.layout.list_item_crime_empty
-                TYPE_UN_SOLVED -> R.layout.list_item_crime_un_solved
-                TYPE_NORMAL -> R.layout.list_item_crime
-                else -> R.layout.list_item_crime
-            }
-            val view = layoutInflater.inflate(itemLayout, parent, false)
+            val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)
         }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             holder.bind(getItem(position))
-        }
-
-
-        override fun getItemViewType(position: Int): Int {
-            if (getItem(position).isSolved) {
-                return TYPE_NORMAL
-            }
-            return TYPE_UN_SOLVED
-        }
-    }
-
-
-    private inner class EmptyHolder(view: View) : CrimeHolder(view) {
-
-        override fun onClick(v: View?) {
-            createCrime()
-        }
-
-        override fun bind(crime: Crime) {
-            //ignore
         }
     }
 
@@ -201,21 +169,27 @@ class CrimeListFragment : Fragment() {
         }
 
         private lateinit var mCrime: Crime
+        private val mRootView: View = view.findViewById(R.id.linearLayout2)
+        private val mImageView: ImageView = view.findViewById(R.id.imageView)
         private val mTitleTextView: TextView = view.findViewById(R.id.crime_title)
         private val mDateTextView: TextView = view.findViewById(R.id.crime_date)
         private val mDateFormat =
             SimpleDateFormat(context?.getString(R.string.date_format), Locale.getDefault())
         //private var mImageView: ImageView? = view.findViewById(R.id.imageView) as ImageView?
 
+
         open fun bind(crime: Crime) {
             this.mCrime = crime
             mTitleTextView.text = mCrime.title
             mDateTextView.text = mDateFormat.format(mCrime.date)
-//            mImageView?.visibility = if (crime.isSolved) {
-//                View.GONE
-//            } else {
-//                View.VISIBLE
-//            }
+            mImageView.visibility = if (crime.isSolved) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+            mRootView.contentDescription = "${mCrime.title}," +
+                    getString(getSolved(mCrime)) +
+                    " ,${mDateTextView.text} "
 
         }
 
@@ -232,6 +206,15 @@ class CrimeListFragment : Fragment() {
             }
             //Toast.makeText(context, "${mCrime.title} pressed!", Toast.LENGTH_SHORT).show()
         }
+
+        private fun getSolved(crime: Crime): Int {
+            return if (crime.isSolved) {
+                R.string.crime_report_solved
+            } else {
+                R.string.crime_report_unsolved
+            }
+        }
+
     }
 
 
