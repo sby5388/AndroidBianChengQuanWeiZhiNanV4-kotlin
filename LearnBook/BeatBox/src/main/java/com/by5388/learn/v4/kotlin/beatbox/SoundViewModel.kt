@@ -1,11 +1,13 @@
 package com.by5388.learn.v4.kotlin.beatbox
 
-import android.view.View
-import android.widget.Toast
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 
-class SoundViewModel : BaseObservable() {
+class SoundViewModel(private val mBeatBox: BeatBox) : BaseObservable() {
+    init {
+
+    }
+
     var sound: Sound? = null
         set(sound) {
             field = sound
@@ -17,9 +19,10 @@ class SoundViewModel : BaseObservable() {
     val title: String?
         get() = sound?.name
 
-
-    fun onButtonClick(v: View) {
-        Toast.makeText(v.context, sound?.name, Toast.LENGTH_SHORT).show()
+    fun onButtonClick() {
+        sound?.let {
+            mBeatBox.play(it)
+        }
     }
 
     private fun temp() {

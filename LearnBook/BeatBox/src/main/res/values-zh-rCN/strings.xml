@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">BeatBox</string>
-    <string name="play_speed">PlayBack Speed %d%%</string>
+    <string name="play_speed">播放速度 %d%%</string>
 </resources>

@@ -3,10 +3,10 @@ package com.by5388.learn.v4.kotlin.beatbox
 import androidx.recyclerview.widget.RecyclerView
 import com.by5388.learn.v4.kotlin.beatbox.databinding.ListItemSoundBinding
 
-class SoundHolder(private val mBinding: ListItemSoundBinding) :
+class SoundHolder(private val mBinding: ListItemSoundBinding, private val mBeatBox: BeatBox) :
     RecyclerView.ViewHolder(mBinding.root) {
     init {
-        mBinding.viewModel = SoundViewModel()
+        mBinding.viewModel = SoundViewModel(mBeatBox)
     }
 
     fun bind(sound: Sound) {
