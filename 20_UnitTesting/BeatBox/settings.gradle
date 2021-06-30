@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "chap20 UnitTesting BeatBox"
