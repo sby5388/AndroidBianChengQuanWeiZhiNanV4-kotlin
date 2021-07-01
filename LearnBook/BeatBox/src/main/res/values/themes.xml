@@ -13,4 +13,16 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="BeatBoxTheme" parent="Theme.AppCompat">
+        <!-- Copy our color theme attributes to the framework -->
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/dark_red</item>
+        <item name="colorAccent">@color/gray</item>
+        <item name="actionModeBackground">@color/red</item>
+        <item name="android:windowBackground">@color/soothing_blue</item>
+        <!--todo 没有使用 android命名空间，因为要覆盖的是appCompat的部分-->
+        <item name="buttonStyle">@style/BeatBoxButton</item>
+    </style>
+
 </resources>
