@@ -10,12 +10,17 @@
 
     </data>
 
-    <Button
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:onClick="@{(view)->viewModel.onButtonClick()}"
-        android:text="@{viewModel.title}"
-        tools:text="soundName">
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
 
-    </Button>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="@{(view)->viewModel.onButtonClick()}"
+            android:text="@{viewModel.title}"
+            tools:text="soundName" />
+
+    </FrameLayout>
 </layout>

@@ -2,7 +2,9 @@
 <resources>
 
     <style name="BeatBoxButton" parent="Widget.AppCompat.Button">
-        <item name="android:background">@color/dark_blue</item>
+        <item name="android:background">@drawable/button_beat_box</item>
+        <!-- todo 去除9patch 图片 折角的阴影动画 -->
+        <!-- <item name="android:stateListAnimator">@null</item> -->
     </style>
 
     <style name="BeatBoxButton.Strong">

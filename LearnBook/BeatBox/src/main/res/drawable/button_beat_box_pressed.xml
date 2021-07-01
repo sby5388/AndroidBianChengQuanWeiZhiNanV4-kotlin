@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--  layer-list 能够组合多个xml-drawable  -->
+    <item>
+        <shape android:shape="oval">
+            <!--  shape:oval 圆形  -->
+            <!--  solid:color 填充颜色  -->
+            <solid android:color="@color/red" />
+
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <!--  stroke 边框-->
+            <!--  width 线条粗细-->
+            <!--  color 线条颜色-->
+            <stroke
+                android:width="4dp"
+                android:color="@color/dark_red" />
+        </shape>
+    </item>
+
+</layer-list>
