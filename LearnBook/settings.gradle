@@ -2,3 +2,4 @@ rootProject.name = "LearnBook"
 include ':GeoQuiz'
 include ':CriminalIntent'
 include ':BeatBox'
+include ':NerdLauncher'
