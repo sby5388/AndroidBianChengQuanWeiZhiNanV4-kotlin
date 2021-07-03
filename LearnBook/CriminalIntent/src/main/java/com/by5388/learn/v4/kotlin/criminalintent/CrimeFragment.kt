@@ -70,7 +70,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
             mPhotoFile.let {
                 val path = it.path
                 val file = File(path)
-                if(file.exists()) {
+                if (file.exists()) {
                     val bitmap = getScaledBitmap(it.path, mPhotoView.width, mPhotoView.height)
                     bitmap?.let {
                         mPhotoView.setImageBitmap(bitmap)
