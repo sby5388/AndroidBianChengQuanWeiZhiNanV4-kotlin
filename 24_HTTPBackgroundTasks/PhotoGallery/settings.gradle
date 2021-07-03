@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "chap24 HttpBackgroundTask PhotoGallery"
