@@ -28,7 +28,7 @@ class FlickrFetchr2 {
     }
 
     fun testFetchPhotos() {
-        val flickrRequest: Call<FlickrResponse> = mFlickrApi.fetchPhotos()
+        val flickrRequest: Call<FlickrResponse> = mFlickrApi.fetchPhotosOld2()
 
 
         flickrRequest.enqueue(object : Callback<FlickrResponse> {
@@ -48,7 +48,7 @@ class FlickrFetchr2 {
             }
 
             override fun onFailure(call: Call<FlickrResponse>, t: Throwable) {
-                println("onFailure: " + t)
+                println("onFailure: $t")
             }
         })
         Thread.sleep(1000)
