@@ -1,12 +1,15 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
+import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.TextView
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 
 class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val mTextView: TextView = itemView.findViewById(R.id.textView_title)
-    fun bind(galleryItem: GalleryItem) {
-        mTextView.text = galleryItem.title
-    }
+    private val mImageView: ImageView = itemView.findViewById(R.id.image_view)
+
+    //TODO 这种写法
+    val bindDrawable: (Drawable) -> Unit =
+        mImageView::setImageDrawable
+
 }

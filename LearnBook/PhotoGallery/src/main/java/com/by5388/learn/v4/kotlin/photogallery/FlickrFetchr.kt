@@ -1,6 +1,9 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.by5388.learn.v4.kotlin.photogallery.api.FlickrApi
@@ -8,6 +11,7 @@ import com.by5388.learn.v4.kotlin.photogallery.api.FlickrResponse
 import com.by5388.learn.v4.kotlin.photogallery.api.PhotoResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -107,6 +111,19 @@ class FlickrFetchr {
         })
         return responseLiveData
     }
+
+    /**
+     * 下载图片:把网络的流 解析成Bitmap
+     */
+    @WorkerThread
+    fun fetchPhoto(url: String): Bitmap? {
+        val response: Response<ResponseBody> = mFlickrApi.fetchUrlBytes(url).execute()
+        //todo use:会自动调用Closeable 的close 方法
+        val bitmap: Bitmap? = response.body()?.byteStream()?.use(BitmapFactory::decodeStream)
+        Log.i(TAG, "Decoded bitmap=$bitmap from Response=$response")
+        return bitmap
+    }
+
 
     fun cancelRequestInFlight() {
         Log.d(TAG, "cancelTask: ")
