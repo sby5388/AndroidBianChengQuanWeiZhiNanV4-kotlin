@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
 import android.util.Log
+import androidx.collection.LruCache
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -20,12 +21,22 @@ private const val MESSAGE_DOWNLOAD = 0
  */
 class ThumbnailDownloader<in T>(
     private val mResponseHandler: Handler,
+    //private val mLifecycle: Lifecycle,
     private val onThumbnailDownloaded: (T, Bitmap) -> Unit
 ) : HandlerThread(TAG) {
     private var mHasQuit = false
     private lateinit var mRequestHandler: Handler
     private val mRequestMap: ConcurrentHashMap<T, String> = ConcurrentHashMap()
     private val mFlickrFetchr = FlickrFetchr()
+
+
+    private val mCache: LruCache<String, Bitmap>
+
+    init {
+        //mLifecycle.addObserver(fragmentLifecycleObserver)
+        val cacheSize = Runtime.getRuntime().maxMemory().div(100).toInt()
+        mCache = LruCache(cacheSize)
+    }
 
     override fun onLooperPrepared() {
         super.onLooperPrepared()
@@ -59,13 +70,14 @@ class ThumbnailDownloader<in T>(
      */
     private fun handleRequest(target: T) {
         val url = mRequestMap[target] ?: return
-        val bitmap = mFlickrFetchr.fetchPhoto(url) ?: return
+        val bitmap = mCache[url] ?: mFlickrFetchr.fetchPhoto(url) ?: return
         mResponseHandler.post(Runnable {
             if (mRequestMap[target] != url || mHasQuit) {
                 return@Runnable
             }
             mRequestMap.remove(target)
             onThumbnailDownloaded(target, bitmap)
+            mCache.put(url, bitmap)
         })
     }
 

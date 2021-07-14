@@ -31,6 +31,14 @@ class PhotoGalleryFragment : Fragment() {
         //todo 添加观察者
         lifecycle.addObserver(mThumbnailDownloader.fragmentLifecycleObserver)
 
+        //todo add for 25.10 lifecycleOwner
+        //viewLifecycleOwnerLiveData.observe(this, {
+        //    it.lifecycle.addObserver(mThumbnailDownloader.fragmentLifecycleObserver)
+        //})
+        // TODO: 2021/7/13 如果这里调用的使用   viewLifecycleOwnerLiveData.observe(viewLifecycleOwner,)
+        //  则会闪退，提示 只能在 "Can't access the Fragment View's LifecycleOwner when getView() is null i.e.,
+        //  before onCreateView() or after onDestroyView()"
+
     }
 
     override fun onCreateView(
