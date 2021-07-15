@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/menu_item_search"
+        android:title="@string/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always" />
+    <!-- TODO 这里有个坑 就是要使用 "app:actionLayout",而不是 "android:actionLayout" -->
+    <item
+        android:id="@+id/menu_item_progress"
+        android:title="@string/loading_progress"
+        android:visible="false"
+        app:actionLayout="@layout/menu_loading_progress"
+        app:showAsAction="ifRoom"
+        tools:visible="true" />
+    <item
+        android:id="@+id/menu_item_clear"
+        android:title="@string/clear_search"
+        app:showAsAction="never" />
+</menu>

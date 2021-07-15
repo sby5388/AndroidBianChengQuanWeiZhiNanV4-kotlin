@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 
 class PhotoAdapter(
     private val mGalleryItems: List<GalleryItem>,
-    val mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
+    private val mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
 ) :
     RecyclerView.Adapter<PhotoHolder>() {
-    private lateinit var mDrawable: Drawable
+    private lateinit var mDefaultDrawable: Drawable
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoHolder {
-        mDrawable = ContextCompat.getDrawable(parent.context, R.drawable.bill_up_close)!!
+        mDefaultDrawable = ContextCompat.getDrawable(parent.context, R.drawable.bill_up_close)!!
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.list_item_gallery, parent, false)
         return PhotoHolder(view)
@@ -22,6 +22,7 @@ class PhotoAdapter(
 
     override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
         val galleryItem = mGalleryItems[position]
+        holder.bindDrawable(mDefaultDrawable)
         mThumbnailDownloader.queueThumbnail(holder, galleryItem.url)
     }
 

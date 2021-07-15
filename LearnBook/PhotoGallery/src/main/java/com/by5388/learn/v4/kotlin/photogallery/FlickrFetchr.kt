@@ -8,9 +8,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.by5388.learn.v4.kotlin.photogallery.api.FlickrApi
 import com.by5388.learn.v4.kotlin.photogallery.api.FlickrResponse
+import com.by5388.learn.v4.kotlin.photogallery.api.PhotoInterceptor
 import com.by5388.learn.v4.kotlin.photogallery.api.PhotoResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,12 +37,18 @@ class FlickrFetchr {
         .create()
 
     init {
+        val client: OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(PhotoInterceptor())
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.flickr.com/")
             //.addConverterFactory(ScalarsConverterFactory.create())
             // todo add custom Gson
             //.addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(mCustomGson))
+            // 2021/7/14 添加了带过滤功能的客户端，替换默认的
+            .client(client)
             .build()
         mFlickrApi = retrofit.create(FlickrApi::class.java)
     }
@@ -80,8 +88,15 @@ class FlickrFetchr {
     }
 
     fun fetchPhotos(): LiveData<List<GalleryItem>> {
+        return fetchPhotoMetadata(mFlickrApi.fetchPhotos())
+    }
+
+    fun searchPhotos(query: String): LiveData<List<GalleryItem>> {
+        return fetchPhotoMetadata(mFlickrApi.searchPhotos(query))
+    }
+
+    private fun fetchPhotoMetadata(flickrRequest: Call<PhotoResponse>): LiveData<List<GalleryItem>> {
         val responseLiveData: MutableLiveData<List<GalleryItem>> = MutableLiveData()
-        val flickrRequest: Call<PhotoResponse> = mFlickrApi.fetchPhotos()
         mPhotoRequestList.add(flickrRequest)
         flickrRequest.enqueue(object : Callback<PhotoResponse> {
             override fun onResponse(

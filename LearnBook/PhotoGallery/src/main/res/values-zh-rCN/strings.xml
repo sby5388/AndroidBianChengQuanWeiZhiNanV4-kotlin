@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">PhotoGallery</string>
+    <string name="search">搜索</string>
+    <string name="clear_search">清除记录</string>
+    <string name="loading_progress">加载进度</string>
+</resources>

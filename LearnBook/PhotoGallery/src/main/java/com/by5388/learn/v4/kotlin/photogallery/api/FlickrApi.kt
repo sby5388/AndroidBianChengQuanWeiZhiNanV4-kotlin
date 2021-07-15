@@ -3,6 +3,7 @@ package com.by5388.learn.v4.kotlin.photogallery.api
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface FlickrApi {
@@ -16,8 +17,20 @@ interface FlickrApi {
     @GET("services/rest/?method=flickr.interestingness.getList&api_key=d80e0fbab7551485a80a02a521f228eb&format=json&nojsoncallback=1&extras=url_s")
     fun fetchPhotosOld2(): Call<FlickrResponse>
 
-    @GET("services/rest/?method=flickr.interestingness.getList&api_key=d80e0fbab7551485a80a02a521f228eb&format=json&nojsoncallback=1&extras=url_s")
+
+    /**
+     * 获取图片列表
+     */
+    //@GET("services/rest/?method=flickr.interestingness.getList&api_key=d80e0fbab7551485a80a02a521f228eb&format=json&nojsoncallback=1&extras=url_s")
+    @GET("services/rest/?method=flickr.interestingness.getList")
     fun fetchPhotos(): Call<PhotoResponse>
+
+    /**
+     * 根据关键字搜索图片
+     */
+    @GET("services/rest/?method=flickr.photos.search")
+    fun searchPhotos(@Query("text") query: String): Call<PhotoResponse>
+
 
     /**
      * 获取图片
