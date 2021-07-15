@@ -1,0 +1,2 @@
+rootProject.name = "chap26 Search PhotoGallery"
+include ':app'
