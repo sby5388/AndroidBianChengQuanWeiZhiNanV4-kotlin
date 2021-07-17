@@ -3,4 +3,10 @@
     <string name="search">搜索</string>
     <string name="clear_search">清除记录</string>
     <string name="loading_progress">加载进度</string>
+
+    <string name="notification_channel_name">FlickrFetchr</string>
+    <string name="new_pictures_title">新的图片</string>
+    <string name="new_pictures_text">你有了一张新的图片</string>
+    <string name="start_polling">开始轮询</string>
+    <string name="stop_polling">停止轮询</string>
 </resources>

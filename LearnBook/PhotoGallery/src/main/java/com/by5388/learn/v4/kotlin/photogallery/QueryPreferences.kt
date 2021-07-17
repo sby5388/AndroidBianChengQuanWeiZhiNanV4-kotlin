@@ -5,6 +5,8 @@ import android.preference.PreferenceManager
 import androidx.core.content.edit
 
 private const val PREF_SEARCH_QUERY = "searchQuery"
+private const val PREF_LAST_RESULT_ID = "lastResultId"
+private const val PREF_IS_POLLING = "isPolling"
 
 /**
  * 保存最近一次搜索的关键字
@@ -22,6 +24,30 @@ object QueryPreferences {
             // 扩展函数edit :会自动调用apply();使用 edit(true){}则会调用 commit()
             .edit {
                 putString(PREF_SEARCH_QUERY, query)
+            }
+    }
+
+    fun getLastResultId(context: Context): String {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getString(PREF_LAST_RESULT_ID, "")!!
+    }
+
+    fun setLastResultId(context: Context, lastResultId: String) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .edit {
+                putString(PREF_LAST_RESULT_ID, lastResultId)
+            }
+    }
+
+    fun isPolling(context: Context): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getBoolean(PREF_IS_POLLING, false)
+    }
+
+    fun setPolling(context: Context, isOn: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .edit {
+                putBoolean(PREF_IS_POLLING, isOn)
             }
     }
 }

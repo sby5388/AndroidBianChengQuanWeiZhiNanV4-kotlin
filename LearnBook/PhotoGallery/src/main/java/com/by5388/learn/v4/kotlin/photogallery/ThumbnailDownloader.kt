@@ -38,6 +38,7 @@ class ThumbnailDownloader<in T>(
         mCache = LruCache(cacheSize)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onLooperPrepared() {
         super.onLooperPrepared()
         mRequestHandler = object : Handler(looper) {

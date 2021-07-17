@@ -19,4 +19,9 @@
         android:id="@+id/menu_item_clear"
         android:title="@string/clear_search"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_toggle_polling"
+        android:checkable="true"
+        android:title="@string/start_polling"
+        app:showAsAction="never|withText" />
 </menu>

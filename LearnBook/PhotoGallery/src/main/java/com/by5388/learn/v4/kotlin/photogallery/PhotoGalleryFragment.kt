@@ -13,6 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.*
+import java.util.concurrent.TimeUnit
+
+private const val POLL_WORK = "POLL_WORK"
 
 class PhotoGalleryFragment : Fragment() {
     private lateinit var mMenuProgressBar: MenuItem
@@ -118,8 +122,25 @@ class PhotoGalleryFragment : Fragment() {
                 mPhotoGalleryViewModel.fetchPhotos("")
                 true
             }
+            R.id.menu_item_toggle_polling -> {
+                togglePolling()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        val toggleItem = menu.findItem(R.id.menu_item_toggle_polling)
+        val isPolling = QueryPreferences.isPolling(requireContext())
+        val toggleItemTitle = if (isPolling) {
+            R.string.stop_polling
+        } else {
+            R.string.start_polling
+        }
+        toggleItem.isChecked = isPolling
+        toggleItem.title = getString(toggleItemTitle)
     }
 
     override fun onDestroy() {
@@ -180,6 +201,51 @@ class PhotoGalleryFragment : Fragment() {
      */
     private fun hideLoadingProgress() {
         mMenuProgressBar.isVisible = false
+    }
+
+    private fun togglePolling() {
+        val isPolling = QueryPreferences.isPolling(requireContext())
+        if (isPolling) {
+            Log.d(TAG, "togglePolling: stop polling")
+            WorkManager.getInstance().cancelAllWorkByTag(POLL_WORK)
+        } else {
+            Log.d(TAG, "togglePolling: start polling")
+            //设置work启动的条件
+            //NetworkType.NOT_REQUIRED:不需要网络
+            //NetworkType.CONNECTED:任何已连接的网络
+            //NetworkType.UNMETERED:不限制流量的网络，包括WIFI和以太网
+            //NetworkType.NOT_ROAMING:非漫游的网络
+            //NetworkType.METERED:按流量计费的网络，移动网络
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            //OneTimeWorkRequest:执行一次性任务
+            //PeriodicWorkRequest:定期执行任务
+            val periodRequest = PeriodicWorkRequest
+                //每十五分钟执行一次:
+                // todo 15分钟 这也是最短的时间间隔，防止系统过于频繁地执行同一任务，从而节约资源，如电池
+                .Builder(PollWorker::class.java, 15, TimeUnit.MINUTES)
+                //增加网络类型限制
+                .setConstraints(constraints)
+                .build()
+            WorkManager.getInstance()
+                // TODO: 2021/7/17 各个参数的含义
+                //  名称；当前的服务策略；网络服务请求(要做的事情)
+                //  名称参数：唯一性，标识网络请求，停止服务时引用
+                //  当前服务策略告诉WorkManager该如何对待已计划安排好的具名工作任务。
+                //  这里使用的是KEEP策略，意思是保留当前服务，不接受安排新的后台服务。
+                //  当前服务策略的另一个选择是REPLACE，顾名思义，就是使用新的后台服务替换当前服务。
+                .enqueueUniquePeriodicWork(
+                    POLL_WORK,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    periodRequest
+                )
+        }
+        //set newValue
+        QueryPreferences.setPolling(requireContext(), !isPolling)
+        requireActivity().invalidateOptionsMenu()
+
     }
 
 }

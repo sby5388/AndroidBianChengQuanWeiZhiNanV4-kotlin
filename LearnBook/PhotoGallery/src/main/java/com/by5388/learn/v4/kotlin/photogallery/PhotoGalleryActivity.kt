@@ -1,5 +1,7 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -21,7 +23,9 @@ class PhotoGalleryActivity : AppCompatActivity() {
         }
     }
 
-    fun test() {
-        //FlickrFetchr().testFetchPhotos()
+    companion object {
+        fun newIntent(context: Context): Intent {
+            return Intent(context, PhotoGalleryActivity::class.java);
+        }
     }
 }
