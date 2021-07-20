@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.by5388.learn.v4.kotlin.photogallery">
 
+    <permission
+        android:name="${applicationId}.PRIVATE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="${applicationId}.PRIVATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -21,6 +26,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".NotificationReceiver"
+            android:exported="false"
+            android:permission="${applicationId}.PRIVATE">
+            <!-- 最低的优先级，-999，而-1000是系统保留的值 -->
+            <intent-filter android:priority="-999">
+                <action android:name="${applicationId}.SHOW_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

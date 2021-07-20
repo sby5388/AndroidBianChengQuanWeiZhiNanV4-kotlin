@@ -1,10 +1,11 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -72,8 +73,28 @@ class PollWorker(private val mContext: Context, workerParameters: WorkerParamete
             .setAutoCancel(true)
             .build()
         //使用了兼容包
-        val notificationManager = NotificationManagerCompat.from(mContext)
-        notificationManager.notify(0, notification)
+//        val notificationManager = NotificationManagerCompat.from(mContext)
+//        notificationManager.notify(0, notification)
 
+        showBackgroundNotification(0, notification)
+
+    }
+
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification) {
+        val intent = Intent(ACTION_SHOW_SHOW_NOTIFICATION).apply {
+            putExtra(REQUEST_CODE, requestCode)
+            putExtra(NOTIFICATION, notification)
+        }
+        //发送带权限限制的有序广播：只有声明并获取权限的广播接收者可以接受到
+        mContext.sendOrderedBroadcast(intent, PERMISSION_PRIVATE)
+
+    }
+
+
+    companion object {
+        const val ACTION_SHOW_SHOW_NOTIFICATION = BuildConfig.APPLICATION_ID + ".SHOW_NOTIFICATION"
+        const val PERMISSION_PRIVATE = BuildConfig.APPLICATION_ID + ".PRIVATE"
+        const val REQUEST_CODE = "REQUEST_CODE"
+        const val NOTIFICATION = "NOTIFICATION"
     }
 }

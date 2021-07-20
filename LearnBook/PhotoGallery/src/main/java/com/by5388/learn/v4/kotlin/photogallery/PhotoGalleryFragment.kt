@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 private const val POLL_WORK = "POLL_WORK"
 
-class PhotoGalleryFragment : Fragment() {
+class PhotoGalleryFragment : VisibleFragment() {
     private lateinit var mMenuProgressBar: MenuItem
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mPhotoGalleryViewModel: PhotoGalleryViewModel
