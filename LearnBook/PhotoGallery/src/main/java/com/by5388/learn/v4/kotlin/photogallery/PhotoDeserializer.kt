@@ -35,6 +35,7 @@ class PhotoDeserializer : JsonDeserializer<PhotoResponse?> {
                         galleryItem.title = jsonObject.get("title").asString
                         galleryItem.id = jsonObject.get("id").asString
                         galleryItem.url = jsonObject.get("url_s").asString
+                        galleryItem.owner = jsonObject.get("owner").asString
                         galleryList.add(galleryItem)
                     }
 

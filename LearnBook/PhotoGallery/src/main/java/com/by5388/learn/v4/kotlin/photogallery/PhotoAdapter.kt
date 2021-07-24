@@ -22,6 +22,7 @@ class PhotoAdapter(
 
     override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
         val galleryItem = mGalleryItems[position]
+        holder.bindGalleryItem(galleryItem)
         holder.bindDrawable(mDefaultDrawable)
         mThumbnailDownloader.queueThumbnail(holder, galleryItem.url)
     }
