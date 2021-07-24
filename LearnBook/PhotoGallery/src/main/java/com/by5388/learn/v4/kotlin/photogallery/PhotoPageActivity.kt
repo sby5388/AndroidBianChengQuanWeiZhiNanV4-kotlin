@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 class PhotoPageActivity : AppCompatActivity() {
+    private lateinit var mFragment: PhotoPageFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_page)
@@ -17,13 +18,22 @@ class PhotoPageActivity : AppCompatActivity() {
         if (currentFragment == null) {
             val uri = intent.data
             uri?.let {
-                val fragment = PhotoPageFragment.newInstance(uri)
+                mFragment = PhotoPageFragment.newInstance(uri)
                 fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
+                    .add(R.id.fragment_container, mFragment)
                     .commit()
             }
 
+        } else {
+            mFragment = currentFragment as PhotoPageFragment
         }
+    }
+
+    override fun onBackPressed() {
+        if (mFragment.canGoBack) {
+            return
+        }
+        super.onBackPressed()
     }
 
     companion object {

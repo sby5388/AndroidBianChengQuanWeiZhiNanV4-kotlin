@@ -7,6 +7,7 @@ import androidx.core.content.edit
 private const val PREF_SEARCH_QUERY = "searchQuery"
 private const val PREF_LAST_RESULT_ID = "lastResultId"
 private const val PREF_IS_POLLING = "isPolling"
+private const val PREF_IS_CHROME_TAB = "useChromeCustomTab"
 
 /**
  * 保存最近一次搜索的关键字
@@ -50,4 +51,17 @@ object QueryPreferences {
                 putBoolean(PREF_IS_POLLING, isOn)
             }
     }
+
+    fun isUseChromeCustomTab(context: Context): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getBoolean(PREF_IS_CHROME_TAB, false)
+    }
+
+    fun setUseChromeCustomTab(context: Context, isOn: Boolean) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .edit {
+                putBoolean(PREF_IS_CHROME_TAB, isOn)
+            }
+    }
+
 }

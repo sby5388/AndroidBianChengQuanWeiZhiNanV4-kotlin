@@ -60,4 +60,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     //add for workManager
     implementation "android.arch.work:work-runtime:1.0.1"
+    //add for Chrome Custom Tab
+    implementation 'androidx.browser:browser:1.3.0'
 }

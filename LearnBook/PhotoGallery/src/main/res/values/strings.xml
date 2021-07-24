@@ -10,4 +10,5 @@
 
     <string name="start_polling">Start polling</string>
     <string name="stop_polling">Stop polling</string>
+    <string name="use_chrome_custom_tab">Use Chrome Custom Tab</string>
 </resources>

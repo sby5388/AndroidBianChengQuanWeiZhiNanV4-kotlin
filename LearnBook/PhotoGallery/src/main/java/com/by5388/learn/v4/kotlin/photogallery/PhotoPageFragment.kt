@@ -18,6 +18,14 @@ class PhotoPageFragment : VisibleFragment() {
     private lateinit var mUri: Uri
     private lateinit var mWebView: WebView
 
+    val canGoBack: Boolean
+        get() = if (mWebView.canGoBack()) {
+            mWebView.goBack()
+            true
+        } else {
+            false
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mUri = arguments?.getParcelable(ARG_URI) ?: Uri.EMPTY

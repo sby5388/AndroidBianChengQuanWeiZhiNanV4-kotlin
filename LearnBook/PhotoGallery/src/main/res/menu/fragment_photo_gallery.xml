@@ -24,4 +24,9 @@
         android:checkable="true"
         android:title="@string/start_polling"
         app:showAsAction="never|withText" />
+    <item
+        android:id="@+id/menu_item_toggle_chrome_custom_tab"
+        android:checkable="true"
+        android:title="@string/use_chrome_custom_tab"
+        app:showAsAction="never|withText" />
 </menu>

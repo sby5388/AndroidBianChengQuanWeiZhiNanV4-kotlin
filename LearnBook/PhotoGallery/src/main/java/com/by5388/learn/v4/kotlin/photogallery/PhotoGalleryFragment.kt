@@ -9,6 +9,9 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -19,9 +22,41 @@ private const val POLL_WORK = "POLL_WORK"
 
 class PhotoGalleryFragment : VisibleFragment() {
     private lateinit var mMenuProgressBar: MenuItem
+    private lateinit var mMenuItemTogglePolling: MenuItem
+    private lateinit var mMenuItemToggleChromeTab: MenuItem
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var mPhotoGalleryViewModel: PhotoGalleryViewModel
     private lateinit var mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
+
+    private val mCallback: PhotoHolder.ItemCallback = object : PhotoHolder.ItemCallback {
+        override fun onClick(item: GalleryItem) {
+            if (mMenuItemToggleChromeTab.isChecked) {
+                CustomTabsIntent.Builder()
+                    .setDefaultColorSchemeParams(
+                        CustomTabColorSchemeParams.Builder()
+                            .setToolbarColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.colorPrimary
+                                )
+                            )
+                            .setSecondaryToolbarColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.colorPrimaryVariant
+                                )
+                            )
+                            .build()
+                    )
+                    .setShowTitle(true)
+                    .build()
+                    .launchUrl(requireContext(), item.mPhotoPageUri)
+            } else {
+                val intent = PhotoPageActivity.newIntent(requireContext(), item.mPhotoPageUri)
+                startActivity(intent)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,9 +95,9 @@ class PhotoGalleryFragment : VisibleFragment() {
 
         mPhotoGalleryViewModel.mGalleryItemLiveData
             .observe(viewLifecycleOwner, Observer { galleryItems ->
-                Log.d(TAG, "getGalleryItems: $galleryItems")
+                Log.d(TAG, "getGalleryItems: ${galleryItems.size}")
                 hideLoadingProgress()
-                mRecyclerView.adapter = PhotoAdapter(galleryItems, mThumbnailDownloader)
+                mRecyclerView.adapter = PhotoAdapter(galleryItems, mCallback, mThumbnailDownloader)
             })
 
 
@@ -113,6 +148,8 @@ class PhotoGalleryFragment : VisibleFragment() {
         }
 
         mMenuProgressBar = menu.findItem(R.id.menu_item_progress)
+        mMenuItemTogglePolling = menu.findItem(R.id.menu_item_toggle_polling)
+        mMenuItemToggleChromeTab = menu.findItem(R.id.menu_item_toggle_chrome_custom_tab)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -123,6 +160,12 @@ class PhotoGalleryFragment : VisibleFragment() {
             }
             R.id.menu_item_toggle_polling -> {
                 togglePolling()
+                requireActivity().invalidateOptionsMenu()
+                true
+            }
+            R.id.menu_item_toggle_chrome_custom_tab -> {
+                toggleUseChromeCustomTab()
+                requireActivity().invalidateOptionsMenu()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -131,15 +174,15 @@ class PhotoGalleryFragment : VisibleFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        val toggleItem = menu.findItem(R.id.menu_item_toggle_polling)
         val isPolling = QueryPreferences.isPolling(requireContext())
         val toggleItemTitle = if (isPolling) {
             R.string.stop_polling
         } else {
             R.string.start_polling
         }
-        toggleItem.isChecked = isPolling
-        toggleItem.title = getString(toggleItemTitle)
+        mMenuItemTogglePolling.isChecked = isPolling
+        mMenuItemTogglePolling.title = getString(toggleItemTitle)
+        mMenuItemToggleChromeTab.isChecked = QueryPreferences.isUseChromeCustomTab(requireContext())
     }
 
     override fun onDestroy() {
@@ -182,7 +225,7 @@ class PhotoGalleryFragment : VisibleFragment() {
      * 清空 RecyclerView
      */
     private fun resetRecyclerViewAdapter() {
-        mRecyclerView.adapter = PhotoAdapter(mutableListOf(), mThumbnailDownloader)
+        mRecyclerView.adapter = PhotoAdapter(mutableListOf(), mCallback, mThumbnailDownloader)
     }
 
     /**
@@ -200,6 +243,11 @@ class PhotoGalleryFragment : VisibleFragment() {
      */
     private fun hideLoadingProgress() {
         mMenuProgressBar.isVisible = false
+    }
+
+    private fun toggleUseChromeCustomTab() {
+        val useChromeCustomTab = QueryPreferences.isUseChromeCustomTab(requireContext())
+        QueryPreferences.setUseChromeCustomTab(requireContext(), !useChromeCustomTab)
     }
 
     private fun togglePolling() {
@@ -243,8 +291,6 @@ class PhotoGalleryFragment : VisibleFragment() {
         }
         //set newValue
         QueryPreferences.setPolling(requireContext(), !isPolling)
-        requireActivity().invalidateOptionsMenu()
-
     }
 
 }

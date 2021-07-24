@@ -9,4 +9,5 @@
     <string name="new_pictures_text">你有了一张新的图片</string>
     <string name="start_polling">开始轮询</string>
     <string name="stop_polling">停止轮询</string>
+    <string name="use_chrome_custom_tab">使用Chrome Custom Tab</string>
 </resources>

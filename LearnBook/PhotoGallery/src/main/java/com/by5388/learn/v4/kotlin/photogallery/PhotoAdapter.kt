@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class PhotoAdapter(
     private val mGalleryItems: List<GalleryItem>,
+    private val mItemCallback: PhotoHolder.ItemCallback,
     private val mThumbnailDownloader: ThumbnailDownloader<PhotoHolder>
 ) :
     RecyclerView.Adapter<PhotoHolder>() {
@@ -23,6 +24,7 @@ class PhotoAdapter(
     override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
         val galleryItem = mGalleryItems[position]
         holder.bindGalleryItem(galleryItem)
+        holder.setCallBack(mItemCallback)
         holder.bindDrawable(mDefaultDrawable)
         mThumbnailDownloader.queueThumbnail(holder, galleryItem.url)
     }
