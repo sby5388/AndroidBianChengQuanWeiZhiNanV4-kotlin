@@ -1,0 +1,2 @@
+rootProject.name = "chap29 WebView PhotoGallery"
+include ':app'
