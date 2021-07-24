@@ -1,2 +1,2 @@
-rootProject.name="chap30"
+rootProject.name="chap30 TouchEvent DragAndDraw"
 include ':app'
