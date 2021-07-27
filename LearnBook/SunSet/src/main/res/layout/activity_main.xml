@@ -22,10 +22,20 @@
             android:src="@drawable/sun" />
     </FrameLayout>
 
-    <View
+    <FrameLayout
+        android:id="@+id/sea"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.39"
-        android:background="@color/sea" />
+        android:background="@color/sea">
+
+        <ImageView
+            android:id="@+id/sea_sun"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/circle_sun"
+            android:src="@drawable/sun" />
+    </FrameLayout>
 
 </LinearLayout>

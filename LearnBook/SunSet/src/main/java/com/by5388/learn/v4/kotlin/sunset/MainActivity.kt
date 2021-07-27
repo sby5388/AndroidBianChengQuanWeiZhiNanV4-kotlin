@@ -16,6 +16,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mSkyView: View
     private lateinit var mSunView: View
 
+    private lateinit var mSeaView: View
+    private lateinit var mSeaSunView: View
+
     /**
      * true:执行日落动画
      * false:执行日出动画
@@ -51,6 +54,10 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.getColor(this, R.color.night_sky)
     }
 
+    private val mBlueSeaColor: Int by lazy {
+        ContextCompat.getColor(this, R.color.sea)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         mSceneView = findViewById(R.id.scene)
         mSkyView = findViewById(R.id.sky)
         mSunView = findViewById(R.id.sun)
+        mSeaView = findViewById(R.id.sea)
+        mSeaSunView = findViewById(R.id.sea_sun)
 
         mSceneView.setOnClickListener {
             if (mSunset) {
@@ -96,12 +105,37 @@ class MainActivity : AppCompatActivity() {
             .ofInt(mSkyView, "backgroundColor", mSunsetSkyColor, mNightSkyColor)
             .setDuration(1500)
         nightSkyAnimator.setEvaluator(ArgbEvaluator())
+        //
+        val nightSeaColorAnimator = ObjectAnimator
+            .ofInt(mSeaView, "backgroundColor", mSunsetSkyColor, mNightSkyColor)
+            .setDuration(1500)
+        nightSeaColorAnimator.setEvaluator(ArgbEvaluator())
+
+        val seaSunYStart = mSeaSunView.top.toFloat()
+        val seaSunYEnd = -mSeaSunView.height.toFloat()
+        val seaSunHeightAnimator = ObjectAnimator
+            .ofFloat(mSeaSunView, "y", seaSunYStart, seaSunYEnd)
+            .setDuration(3000)
+        //插值器:越来越快
+        seaSunHeightAnimator.interpolator = AccelerateInterpolator()
+        val seaColorAnimator = ObjectAnimator
+            .ofInt(mSeaView, "backgroundColor", mBlueSeaColor, mSunsetSkyColor)
+            .setDuration(3000)
+        seaColorAnimator.setEvaluator(ArgbEvaluator())
+
+
+        val nightAnimatorSet = AnimatorSet()
+        nightAnimatorSet.play(nightSeaColorAnimator).with(nightSkyAnimator)
+
+        val dayAnimatorSet = AnimatorSet()
+        dayAnimatorSet.play(heightAnimator)
+            .with(seaSunHeightAnimator)
+            .with(sunsetSkyAnimator)
+            .with(seaColorAnimator)
 
         val animatorSet = AnimatorSet()
-        animatorSet.play(heightAnimator)
-            .with(sunsetSkyAnimator)
-            //在nightAnimator之前，也就是heightAnimator播完之后播放nightAnimator
-            .before(nightSkyAnimator)
+        animatorSet.play(dayAnimatorSet)
+            .before(nightAnimatorSet)
         animatorSet.addListener(mAnimatorListener)
         animatorSet.start()
     }
@@ -133,13 +167,37 @@ class MainActivity : AppCompatActivity() {
             .ofInt(mSkyView, "backgroundColor", mNightSkyColor, mSunsetSkyColor)
             .setDuration(1500)
         daySkyAnimator.setEvaluator(ArgbEvaluator())
+        //
+        val nightSeaColorAnimator = ObjectAnimator
+            .ofInt(mSeaView, "backgroundColor", mNightSkyColor, mSunsetSkyColor)
+            .setDuration(1500)
+        nightSeaColorAnimator.setEvaluator(ArgbEvaluator())
+
+        val seaSunYStart = -mSeaSunView.height.toFloat()
+        val seaSunYEnd = mSeaSunView.top.toFloat()
+        val seaSunHeightAnimator = ObjectAnimator
+            .ofFloat(mSeaSunView, "y", seaSunYStart, seaSunYEnd)
+            .setDuration(3000)
+        //插值器:越来越快
+        seaSunHeightAnimator.interpolator = DecelerateInterpolator()
+        val seaColorAnimator = ObjectAnimator
+            .ofInt(mSeaView, "backgroundColor", mSunsetSkyColor, mBlueSeaColor)
+            .setDuration(3000)
+        seaColorAnimator.setEvaluator(ArgbEvaluator())
+
+        val nightAnimatorSet = AnimatorSet()
+        nightAnimatorSet.play(nightSeaColorAnimator).with(daySkyAnimator)
+
+        val dayAnimatorSet = AnimatorSet()
+        dayAnimatorSet.play(heightAnimator)
+            .with(seaSunHeightAnimator)
+            .with(sunRiseSkyAnimator)
+            .with(seaColorAnimator)
 
 
         val animatorSet = AnimatorSet()
-        animatorSet.play(heightAnimator)
-            .with(sunRiseSkyAnimator)
-            //在nightAnimator之后，也就是heightAnimator播之前播放daySkyAnimator
-            .after(daySkyAnimator)
+        animatorSet.play(dayAnimatorSet)
+            .after(nightAnimatorSet)
         animatorSet.addListener(mAnimatorListener)
         animatorSet.start()
 
