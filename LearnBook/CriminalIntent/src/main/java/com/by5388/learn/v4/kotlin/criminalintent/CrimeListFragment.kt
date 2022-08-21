@@ -1,6 +1,5 @@
 package com.by5388.learn.v4.kotlin.criminalintent
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -9,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,15 +46,9 @@ class CrimeListFragment : Fragment() {
      *  20210627 已修复
      */
     private var mAdapter: CrimeAdapter? = null
-    private var mCallback: Callback? = null
 
     private val mCrimeListViewModel: CrimeListViewModel by lazy {
-        defaultViewModelProviderFactory.create(CrimeListViewModel::class.java)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mCallback = context as Callback?
+        ViewModelProvider(requireActivity()).get(CrimeListViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,12 +90,6 @@ class CrimeListFragment : Fragment() {
             })
     }
 
-    override fun onResume() {
-        super.onResume()
-        //mCrimeListViewModel.loadData()
-    }
-
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_crime_list, menu)
@@ -117,15 +106,15 @@ class CrimeListFragment : Fragment() {
 
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        mCallback = null
-    }
-
     private fun createCrime() {
         val crime = Crime()
         mCrimeListViewModel.addCrime(crime)
-        mCallback?.onCrimeSelected(crime.id)
+        toDetail(crime)
+    }
+
+    private fun toDetail(crime: Crime) {
+        NavHostFragment.findNavController(this@CrimeListFragment)
+            .navigate(R.id.action_list_to_detail, CrimeFragment.newBundle(crime.id))
     }
 
     private fun updateUI(crimes: List<Crime>) {
@@ -194,7 +183,7 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            mCallback?.onCrimeSelected(mCrime.id)
+            toDetail(mCrime)
             val id = v?.id
             if (id == R.id.imageView) {
                 Toast.makeText(
@@ -215,16 +204,5 @@ class CrimeListFragment : Fragment() {
             }
         }
 
-    }
-
-
-    companion object {
-        fun newInstance(): CrimeListFragment {
-            return CrimeListFragment()
-        }
-    }
-
-    interface Callback {
-        fun onCrimeSelected(crimeId: UUID);
     }
 }

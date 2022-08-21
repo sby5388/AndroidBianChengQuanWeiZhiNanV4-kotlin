@@ -24,7 +24,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.text.DateFormat
@@ -62,7 +62,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
 
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
-        defaultViewModelProviderFactory.create(CrimeDetailViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(CrimeDetailViewModel::class.java)
     }
 
     private val mOnGlobalFocusChangeListener: ViewTreeObserver.OnGlobalFocusChangeListener =
@@ -237,6 +237,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) {
@@ -252,6 +253,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -476,14 +478,10 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     }
 
     companion object {
-        fun newInstance(crimeId: UUID): CrimeFragment {
-            val args = Bundle().apply {
+        fun newBundle(crimeId: UUID): Bundle {
+            return Bundle().apply {
                 putSerializable(ARG_CRIME_ID, crimeId)
             }
-            return CrimeFragment().apply {
-                arguments = args
-            }
-
         }
     }
 }
