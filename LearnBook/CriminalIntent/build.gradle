@@ -66,6 +66,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //add for navigationFragment
-    implementation 'androidx.navigation:navigation-fragment:2.3.5'
-    implementation 'androidx.navigation:navigation-ui:2.3.5'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+
+
+    // https://mvnrepository.com/artifact/com.squareup.leakcanary/leakcanary-android
+    implementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+
 }

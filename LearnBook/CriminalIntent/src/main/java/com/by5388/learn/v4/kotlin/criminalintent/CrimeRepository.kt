@@ -45,6 +45,17 @@ class CrimeRepository private constructor(context: Context) {
         }
     }
 
+    fun updateCrime(uuid: UUID, date: Date) {
+        mExecutor.execute {
+            val crime = mCrimeDao.queryCrime(uuid)
+            crime?.let {
+                it.date = date
+                mCrimeDao.updateCrime(crime)
+            }
+        }
+    }
+
+
     fun addCrime(crime: Crime) {
         mExecutor.execute {
             mCrimeDao.insertCrime(crime)

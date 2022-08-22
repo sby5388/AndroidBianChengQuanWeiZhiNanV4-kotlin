@@ -4,17 +4,25 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import java.util.*
 
 /**
  * @author  admin  on 2021/6/6.
  */
 private const val EXTRA_DATE = "com.by5388.learn.v4.kotlin.criminalintent.extra_date"
+private const val EXTRA_UUID = "com.by5388.learn.v4.kotlin.criminalintent.extra_id"
 
 class DatePickerFragment : DialogFragment() {
+    private val model: CrimeDetailViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(CrimeDetailViewModel::class.java)
+    }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val date = arguments?.getSerializable(EXTRA_DATE) as Date ?: Date()
+        val uuid = arguments?.getSerializable(EXTRA_UUID) as UUID ?: null
+
         val calendar = Calendar.getInstance()
         calendar.time = date
         val year = calendar.get(Calendar.YEAR)
@@ -23,9 +31,9 @@ class DatePickerFragment : DialogFragment() {
 
         val dateSetListener: DatePickerDialog.OnDateSetListener =
             DatePickerDialog.OnDateSetListener { _, _year, _month, _dayOfMonth ->
-                val resultDate = GregorianCalendar(_year, _month, _dayOfMonth).time
-                targetFragment?.let { fragment ->
-                    (fragment as Callbacks).onDateSelected(resultDate)
+                uuid?.let {
+                    val resultDate = GregorianCalendar(_year, _month, _dayOfMonth).time
+                    model.updateCrime(it, resultDate)
                 }
             }
 
@@ -37,18 +45,15 @@ class DatePickerFragment : DialogFragment() {
     }
 
     companion object {
-        fun newInstance(date: Date): DatePickerFragment {
+        fun newInstance(date: Date, id: UUID): DatePickerFragment {
             val args = Bundle().apply {
                 putSerializable(EXTRA_DATE, date)
+                putSerializable(EXTRA_UUID, id)
             }
             return DatePickerFragment().apply {
                 arguments = args
             }
         }
-    }
-
-    interface Callbacks {
-        fun onDateSelected(date: Date)
     }
 
 

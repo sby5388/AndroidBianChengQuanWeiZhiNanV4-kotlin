@@ -16,15 +16,16 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.*
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import com.by5388.learn.v4.kotlin.criminalintent.databinding.FragmentCrimeBinding
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.text.DateFormat
@@ -43,19 +44,13 @@ private const val REQUEST_CODE_PHOTO = 4
 private const val ARG_CRIME_ID = "crime_id"
 private const val DATE_FORMAT = "EEE,MMM,dd"
 
-class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
+class CrimeFragment : Fragment() {
 
     private lateinit var mCrime: Crime
-    private lateinit var mRootView: View
-    private lateinit var mTitleField: EditText
-    private lateinit var mDateButton: Button
-    private lateinit var mSolvedCheckBox: CheckBox
-    private lateinit var mReportButton: Button
-    private lateinit var mSuspectButton: Button
-    private lateinit var mCallButton: Button
-    private lateinit var mPhotoView: ImageView
-    private lateinit var mPhotoButton: ImageButton
     private lateinit var mDateFormat: DateFormat
+    private var _mBinding: FragmentCrimeBinding? = null
+    private val mBinding: FragmentCrimeBinding
+        get() = _mBinding!!
 
     private lateinit var mPhotoFile: File
     private lateinit var mPhotoUri: Uri
@@ -64,26 +59,22 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
         ViewModelProvider(requireActivity()).get(CrimeDetailViewModel::class.java)
     }
-
-    private val mOnGlobalFocusChangeListener: ViewTreeObserver.OnGlobalFocusChangeListener =
-        ViewTreeObserver.OnGlobalFocusChangeListener { oldFocus, newFocus ->
-            mPhotoFile.let {
-                val path = it.path
-                val file = File(path)
-                if (file.exists()) {
-                    val bitmap = getScaledBitmap(it.path, mPhotoView.width, mPhotoView.height)
-                    bitmap?.let {
-                        mPhotoView.setImageBitmap(bitmap)
-                    }
-
-                }
-            }
+    var titleWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
         }
 
-    override fun onDateSelected(date: Date) {
-        mCrime.date = date
-        updateUI()
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            mCrime?.title = s.toString()
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+        }
     }
+
+//    private var _mOnGlobalFocusChangeListener: ViewTreeObserver.OnGlobalFocusChangeListener? = null
+//
+//    private val mOnGlobalFocusChangeListener: ViewTreeObserver.OnGlobalFocusChangeListener
+//        get() = _mOnGlobalFocusChangeListener!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,27 +92,18 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_crime, container, false)
+    ): View {
+        _mBinding = FragmentCrimeBinding.inflate(inflater, container, false)
+        return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mRootView = view.findViewById(R.id.view_root)
-        mTitleField = view.findViewById<EditText>(R.id.crime_title)
-        mDateButton = view.findViewById(R.id.crime_date)
-        mReportButton = view.findViewById(R.id.crime_report)
-        mSuspectButton = view.findViewById(R.id.crime_suspect)
-        mCallButton = view.findViewById(R.id.crime_call)
-        mSolvedCheckBox = view.findViewById(R.id.crime_solved)
-        mPhotoView = view.findViewById(R.id.crime_photo)
-        mPhotoButton = view.findViewById(R.id.crime_camera)
-
-        mDateButton.apply {
+        mBinding.crimeDate.apply {
             text = mDateFormat.format(mCrime.date)
             setOnClickListener {
-                DatePickerFragment.newInstance(mCrime.date).apply {
-                    setTargetFragment(this@CrimeFragment, REQUEST_CODE_DATE)
+                DatePickerFragment.newInstance(mCrime.date, mCrime.id).apply {
+                    //setTargetFragment(this@CrimeFragment, REQUEST_CODE_DATE)
                     show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
                 }
             }
@@ -130,40 +112,23 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
 
 
         mCrimeDetailViewModel.mCrimeLiveData
-            .observe(viewLifecycleOwner,
-                Observer { crime ->
-                    crime?.let {
-                        this.mCrime = crime
-                        mPhotoFile = mCrimeDetailViewModel.getPhotoFile(crime)
-                        mPhotoUri = getUriCompat(mPhotoFile)
-                        updateUI()
-                    }
-                })
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val titleWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            .observe(viewLifecycleOwner) { crime ->
+                crime?.let {
+                    this.mCrime = it
+                    mPhotoFile = mCrimeDetailViewModel.getPhotoFile(it)
+                    mPhotoUri = getUriCompat(mPhotoFile)
+                    updateUI()
+                }
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                mCrime.title = s.toString()
-            }
+        mBinding.crimeTitle.addTextChangedListener(titleWatcher)
 
-            override fun afterTextChanged(s: Editable?) {
-            }
-        }
-
-        mTitleField.addTextChangedListener(titleWatcher)
-
-        mSolvedCheckBox.apply {
+        mBinding.crimeSolved.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 mCrime.isSolved = isChecked
             }
         }
-        mReportButton.setOnClickListener {
+        mBinding.crimeReport.setOnClickListener {
             // TODO: 2021/6/6 apply && also
             Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -173,7 +138,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                 startActivity(intent)
             }
         }
-        mSuspectButton.apply {
+        mBinding.crimeSuspect.apply {
             val pickIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             setOnClickListener {
                 startActivityForResult(pickIntent, REQUEST_CODE_CONTACT)
@@ -184,14 +149,14 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                 isEnabled = false
             }
         }
-        mCallButton.setOnClickListener {
+        mBinding.crimeCall.setOnClickListener {
             if (grantedContactPermission()) {
                 callPhone(getNumber())
             } else {
                 val show = shouldShowRequestPermissionRationale()
                 if (show) {
                     Snackbar.make(
-                        mRootView,
+                        mBinding.viewRoot,
                         R.string.tip_permission_read_contact,
                         Snackbar.LENGTH_INDEFINITE
                     ).setAction(android.R.string.ok) {
@@ -203,7 +168,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
             }
         }
 
-        mPhotoButton.apply {
+        mBinding.crimeCamera.apply {
             val pm = requireActivity().packageManager
             val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             val resolveActivity =
@@ -226,16 +191,51 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                 startActivityForResult(captureImage, REQUEST_CODE_PHOTO)
             }
         }
-        mPhotoView.setOnClickListener {
+        mBinding.crimePhoto.setOnClickListener {
             if (!mPhotoFile.exists()) {
                 return@setOnClickListener
             }
             val fragment = PhotoFragment.newInstance(mPhotoFile.path)
             fragmentManager?.let { it1 -> fragment.show(it1, PhotoFragment.TAG) }
         }
-        mPhotoView.viewTreeObserver.addOnGlobalFocusChangeListener(mOnGlobalFocusChangeListener)
+
+//        _mOnGlobalFocusChangeListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
+//            mPhotoFile.let {
+//                val path = it.path
+//                val file = File(path)
+//                if (file.exists()) {
+//                    val bitmap = getScaledBitmap(
+//                        it.path,
+//                        mBinding.crimePhoto.width,
+//                        mBinding.crimePhoto.height
+//                    )
+//                    bitmap?.let {
+//                        mBinding.crimePhoto.setImageBitmap(bitmap)
+//                    }
+//                }
+//            }
+//        }
+//
+//        Log.d(TAG, "onViewCreated: ")
+//        mBinding.viewRoot.viewTreeObserver.addOnGlobalFocusChangeListener(
+//            mOnGlobalFocusChangeListener
+//        )
 
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                Log.d(TAG, "onOptionsItemSelected: 返回")
+                NavHostFragment.findNavController(this@CrimeFragment)
+                    .popBackStack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -264,7 +264,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
         if (requestCode == REQUEST_CODE_PERMISSION_READ_CONTACTS) {
             if (grantedContactPermission()) {
                 Snackbar.make(
-                    mRootView,
+                    mBinding.viewRoot,
                     R.string.user_granted_permission,
                     Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
@@ -273,7 +273,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                 Log.d(TAG, "onRequestPermissionsResult: grantedContactPermission")
             } else if (grantResults.isEmpty()) {
                 Snackbar.make(
-                    mRootView,
+                    mBinding.viewRoot,
                     R.string.user_cancel,
                     Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
@@ -284,7 +284,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                 Log.d(TAG, "onRequestPermissionsResult: shouldShow =$shouldShow")
                 if (shouldShow) {
                     Snackbar.make(
-                        mRootView,
+                        mBinding.viewRoot,
                         R.string.tip_permission_read_contact,
                         Snackbar.LENGTH_INDEFINITE
                     ).setAction(android.R.string.ok) {
@@ -294,7 +294,7 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
                     // FIXME: 2021/6/7 本来用户点击拒绝且不再提示，应该走这里的，却没有调用到整个onRequestPermissionsResult
                     Log.d(TAG, "onRequestPermissionsResult:用户拒绝，且不再提示 ")
                     Snackbar.make(
-                        mRootView,
+                        mBinding.viewRoot,
                         R.string.user_refuse,
                         Snackbar.LENGTH_INDEFINITE
                     ).setAction(android.R.string.ok) {
@@ -308,7 +308,16 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     override fun onStop() {
         super.onStop()
         mCrimeDetailViewModel.saveCrime(mCrime)
-        mPhotoView.viewTreeObserver.removeOnGlobalLayoutListener { mOnGlobalFocusChangeListener }
+    }
+
+    override fun onDestroyView() {
+        Log.d(TAG, "onDestroyView: remove")
+        mBinding.crimePhoto.setImageBitmap(null)
+//        mBinding.viewRoot.viewTreeObserver.removeOnGlobalLayoutListener { mOnGlobalFocusChangeListener }
+        mBinding.crimeTitle.removeTextChangedListener(titleWatcher)
+//        _mOnGlobalFocusChangeListener = null
+        _mBinding = null
+        super.onDestroyView()
     }
 
     override fun onDetach() {
@@ -366,18 +375,18 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     }
 
     private fun updateUI() {
-        mTitleField.setText(mCrime.title)
-        mDateButton.text = mDateFormat.format(mCrime.date)
-        mSolvedCheckBox.apply {
+        mBinding.crimeTitle.setText(mCrime.title)
+        mBinding.crimeDate.text = mDateFormat.format(mCrime.date)
+        mBinding.crimeSolved.apply {
             isChecked = mCrime.isSolved
             // TODO: 2021/6/6 跳过此次动画，不影响手动勾选的效果
             jumpDrawablesToCurrentState()
         }
         if (mCrime.suspect.isNotBlank()) {
-            mSuspectButton.text = mCrime.suspect
-            mCallButton.visibility = View.VISIBLE
+            mBinding.crimeSuspect.text = mCrime.suspect
+            mBinding.crimeCall.visibility = View.VISIBLE
         } else {
-            mCallButton.visibility = View.GONE
+            mBinding.crimeCall.visibility = View.GONE
         }
         updatePhotoView()
     }
@@ -385,11 +394,13 @@ class CrimeFragment : Fragment(), DatePickerFragment.Callbacks {
     private fun updatePhotoView() {
         if (mPhotoFile.exists()) {
             val bitmap = getScaledBitmap(mPhotoFile.path, requireActivity())
-            mPhotoView.setImageBitmap(bitmap)
-            mPhotoView.contentDescription = getString(R.string.crime_photo_image_description)
+            mBinding.crimePhoto.setImageBitmap(bitmap)
+            mBinding.crimePhoto.contentDescription =
+                getString(R.string.crime_photo_image_description)
         } else {
-            mPhotoView.setImageBitmap(null)
-            mPhotoView.contentDescription = getString(R.string.crime_photo_no_image_description)
+            mBinding.crimePhoto.setImageBitmap(null)
+            mBinding.crimePhoto.contentDescription =
+                getString(R.string.crime_photo_no_image_description)
         }
     }
 

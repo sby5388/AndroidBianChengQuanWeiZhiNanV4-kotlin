@@ -27,4 +27,7 @@ interface CrimeDao {
     fun insertCrime(crime: Crime)
 
 
+    @Query("select * from Crime where id = (:id)")
+    fun queryCrime(id: UUID): Crime?
+
 }

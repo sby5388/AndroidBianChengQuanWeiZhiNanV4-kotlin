@@ -13,6 +13,7 @@
 
         <action
             android:id="@+id/action_list_to_detail"
+            app:popUpTo="@id/CrimeListFragment"
             app:destination="@id/CrimeFragment" />
 
     </fragment>
