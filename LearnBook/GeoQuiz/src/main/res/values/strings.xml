@@ -22,5 +22,7 @@
     <string name="cheat_button">Cheat!</string>
     <string name="judgment_toast">Cheating is wrong.</string>
     <string name="system_version">API Level %d</string>
+    <string name="pre_question">PreQuestion</string>
+    <string name="next_question">NextQuestion</string>
 
 </resources>

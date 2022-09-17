@@ -18,5 +18,7 @@
     <string name="cheat_button">作弊!</string>
     <string name="judgment_toast">作弊是不正确.</string>
     <string name="system_version">系统版本 %d</string>
+    <string name="pre_question">上一题</string>
+    <string name="next_question">下一题</string>
 
 </resources>

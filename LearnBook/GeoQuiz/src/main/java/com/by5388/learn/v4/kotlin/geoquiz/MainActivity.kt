@@ -99,6 +99,11 @@ class MainActivity : AppCompatActivity() {
         mButtonCheat.setOnClickListener { view ->
             toCheatActivity(view)
         }
+        //add for 2.8　挑战练习：为TextView添加监听器
+        mQuestionTextView.setOnClickListener {
+            quizViewModel.moveToNext()
+            updateQuestion()
+        }
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
