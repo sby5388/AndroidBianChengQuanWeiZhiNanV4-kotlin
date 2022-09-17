@@ -64,7 +64,7 @@ class CrimeFragment : Fragment() {
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            mCrime?.title = s.toString()
+            mCrime.title = s.toString()
         }
 
         override fun afterTextChanged(s: Editable?) {
@@ -415,7 +415,7 @@ class CrimeFragment : Fragment() {
         val dateString = android.text.format.DateFormat.format(
             DATE_FORMAT, mCrime.date
         ).toString()
-        var suspect = if (mCrime.suspect.isBlank()) {
+        val suspect = if (mCrime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
             getString(R.string.crime_report_suspect, mCrime.suspect)

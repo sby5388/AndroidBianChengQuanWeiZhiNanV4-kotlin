@@ -13,8 +13,8 @@
 
         <action
             android:id="@+id/action_list_to_detail"
-            app:popUpTo="@id/CrimeListFragment"
-            app:destination="@id/CrimeFragment" />
+            app:destination="@id/CrimeFragment"
+            app:popUpTo="@id/CrimeListFragment" />
 
     </fragment>
 

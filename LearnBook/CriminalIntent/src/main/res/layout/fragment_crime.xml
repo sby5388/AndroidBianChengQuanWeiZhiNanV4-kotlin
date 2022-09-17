@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -53,7 +54,8 @@
                 android:id="@+id/crime_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/crime_title_hint" />
+                android:hint="@string/crime_title_hint"
+                android:inputType="text" />
         </LinearLayout>
 
     </LinearLayout>
