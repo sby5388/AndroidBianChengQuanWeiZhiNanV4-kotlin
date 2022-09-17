@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
             val d = mQuizViewModel.mCountRight * 100 / mQuizViewModel.mCount
             Toast.makeText(
                 this,
-                String.format("分数为%d", d),
+                String.format("正确率为%d%%", d),
                 Toast.LENGTH_SHORT
             ).show()
         }
