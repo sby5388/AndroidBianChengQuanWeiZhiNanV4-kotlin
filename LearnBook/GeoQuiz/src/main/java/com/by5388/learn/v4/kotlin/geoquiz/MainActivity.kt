@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mQuestionTextView: TextView
 
     /**
-     * TODO 惰性初始化
+     * TODO 惰性初始化:延迟初始化
      * 使用by lazy关键字，可以确保quizViewModel属性是val类型，而不是var类型。
      * 这简直太棒了，因为只在activity实例对象被创建后，
      * 才需要获取和保存QuizViewModel，也就是说，quizViewModel一次只应该赋一个值。
@@ -42,10 +41,7 @@ class MainActivity : AppCompatActivity() {
      * 应用则会抛出IllegalStateException异常。
      */
     private val mQuizViewModel: QuizViewModel by lazy {
-        // FIXME: 2021/6/4 这种方式出错了
-        defaultViewModelProviderFactory.create(QuizViewModel::class.java)
-        // TODO: 2021/6/4 这种方式正确
-        ViewModelProviders.of(this).get(QuizViewModel::class.java)
+        ViewModelProvider(this).get(QuizViewModel::class.java)
     }
 
 
@@ -61,10 +57,8 @@ class MainActivity : AppCompatActivity() {
         mButtonPre = findViewById(R.id.pre_button)
         mQuestionTextView = findViewById(R.id.question_text_view)
 
-
-        val provider: ViewModelProvider = ViewModelProviders.of(this)
-        val quizViewModel = provider.get(QuizViewModel::class.java)
-
+        val quizViewModel = mQuizViewModel
+        Log.d(TAG, "onCreate: mQuizViewModel = $quizViewModel")
 
         // TODO: 2021/6/5 当 savedInstanceState==null 时，取0
         val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
@@ -78,14 +72,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         mButtonFalse.setOnClickListener {
-            /*
-            val makeText =
-                Toast.makeText(this, R.string.incorrect_toast, Toast.LENGTH_SHORT)
-                    .apply {
-                        setGravity(Gravity.TOP, 0, 0)
-                    }
-            makeText.show()
-             */
             checkAnswer(false)
         }
         mButtonNext.setOnClickListener {
@@ -187,14 +173,4 @@ class MainActivity : AppCompatActivity() {
         )
         startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
     }
-
-    /**
-     * @Deprecated #onCreate
-     */
-    private fun oldFunction(): Unit {
-        val provider = ViewModelProviders.of(this)
-        val quizViewModel = provider.get(QuizViewModel::class.java)
-    }
-
-    // FIXME: 2021/6/4 P153 #4.2 出现了旋转页面 数据丢失的情况
 }
