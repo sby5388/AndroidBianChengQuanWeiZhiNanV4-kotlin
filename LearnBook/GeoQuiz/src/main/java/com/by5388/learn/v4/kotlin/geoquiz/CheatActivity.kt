@@ -43,16 +43,26 @@ class CheatActivity : AppCompatActivity() {
         mSystemVersionTextView.text = getString(R.string.system_version, Build.VERSION.SDK_INT)
 
         mShowAnswerButton.setOnClickListener {
-            val answerText = when {
-                mAnswerIsTrue -> R.string.true_button
-                else -> R.string.false_button
-            }
-            mAnswerTextView.setText(answerText)
             mCheat = true
+            showResult()
             setAnswerShowResult()
         }
         mCheat = savedInstanceState?.getBoolean(KEY_CHEAT, false) ?: false
         setAnswerShowResult()
+        showResult()
+    }
+
+    private fun showResult() {
+        mShowAnswerButton.isEnabled = !mCheat
+        if (!mCheat) {
+            mAnswerTextView.text = null
+            return
+        }
+        val answerText: Int = when {
+            mAnswerIsTrue -> R.string.true_button
+            else -> R.string.false_button
+        }
+        mAnswerTextView.setText(answerText)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
