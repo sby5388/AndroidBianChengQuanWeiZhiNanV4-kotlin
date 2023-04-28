@@ -5,7 +5,8 @@
     <string name="crime_details_label">明细</string>
     <string name="crime_solved_label">是否解决</string>
     <string name="call_police">联系警方</string>
-    <string name="date_format">yyyy年MM月dd日  HH:mm:ss</string>
+    <string name="date_format">yyyy年MM月dd日</string>
+    <string name="time_format">HH:mm:ss</string>
     <string name="new_crime">新增crime记录</string>
     <string name="crime_suspect_text">嫌疑人联系方式</string>
     <string name="crime_report_text">抗议或投诉</string>

@@ -30,6 +30,12 @@
         <action
             android:id="@+id/action_CrimeFragment_to_PhotoFragmentDialog"
             app:destination="@id/PhotoFragmentDialog" />
+        <action
+            android:id="@+id/action_CrimeFragment_to_DatePickerDialogFragment"
+            app:destination="@id/DatePickerDialogFragment" />
+        <action
+            android:id="@+id/action_CrimeFragment_to_TimePickerDialogFragment"
+            app:destination="@id/TimePickerDialogFragment" />
 
 
     </fragment>
@@ -44,6 +50,40 @@
             android:name="filePath"
             app:argType="string"
             app:nullable="false" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/DatePickerDialogFragment"
+        android:name="com.by5388.learn.v4.kotlin.criminalintent.DatePickerDialogFragment"
+        android:label="选择日期"
+        tools:layout="@layout/dialog_picker_date">
+        <argument
+            android:name="crimeID"
+            app:argType="java.util.UUID"
+            app:nullable="false" />
+
+        <argument
+            android:name="date"
+            app:argType="java.util.Date"
+            app:nullable="false" />
+
+    </dialog>
+
+    <dialog
+        android:id="@+id/TimePickerDialogFragment"
+        android:name="com.by5388.learn.v4.kotlin.criminalintent.TimePickerDialogFragment"
+        android:label="选择时间"
+        tools:layout="@layout/dialog_picker_time">
+        <argument
+            android:name="crimeID"
+            app:argType="java.util.UUID"
+            app:nullable="false" />
+
+        <argument
+            android:name="date"
+            app:argType="java.util.Date"
+            app:nullable="false" />
+
     </dialog>
 
 

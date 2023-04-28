@@ -49,6 +49,7 @@ class CrimeFragment : Fragment() {
 
     private lateinit var mCrime: Crime
     private lateinit var mDateFormat: DateFormat
+    private lateinit var mTimeFormat: DateFormat
     private var _mBinding: FragmentCrimeBinding? = null
     private val mBinding: FragmentCrimeBinding
         get() = _mBinding!!
@@ -89,6 +90,12 @@ class CrimeFragment : Fragment() {
                 R.string.date_format
             ), Locale.getDefault()
         )
+
+        mTimeFormat = SimpleDateFormat(
+            context?.getString(
+                R.string.time_format
+            ), Locale.getDefault()
+        )
     }
 
     override fun onCreateView(
@@ -106,10 +113,13 @@ class CrimeFragment : Fragment() {
         mBinding.crimeDate.apply {
             text = mDateFormat.format(mCrime.date)
             setOnClickListener {
-                DatePickerFragment.newInstance(mCrime.date, mCrime.id).apply {
-                    //setTargetFragment(this@CrimeFragment, REQUEST_CODE_DATE)
-                    show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
-                }
+                pickerDate()
+            }
+        }
+        mBinding.crimeTime.apply {
+            text = mTimeFormat.format(mCrime.date)
+            setOnClickListener {
+                pickerTime()
             }
         }
 
@@ -380,6 +390,7 @@ class CrimeFragment : Fragment() {
     private fun updateUI() {
         mBinding.crimeTitle.setText(mCrime.title)
         mBinding.crimeDate.text = mDateFormat.format(mCrime.date)
+        mBinding.crimeTime.text = mTimeFormat.format(mCrime.date)
         mBinding.crimeSolved.apply {
             isChecked = mCrime.isSolved
             // TODO: 2021/6/6 跳过此次动画，不影响手动勾选的效果
@@ -496,4 +507,27 @@ class CrimeFragment : Fragment() {
         val build = PhotoFragmentArgs.Builder(filePath).build()
         navController.navigate(R.id.action_CrimeFragment_to_PhotoFragmentDialog, build.toBundle())
     }
+
+    /**
+     * 选择日期
+     */
+    private fun pickerDate() {
+        val build = DatePickerDialogFragmentArgs.Builder(mCrime.id, mCrime.date).build()
+        findNavController().navigate(
+            R.id.action_CrimeFragment_to_DatePickerDialogFragment,
+            build.toBundle()
+        )
+    }
+
+    /**
+     * 选择时间
+     */
+    private fun pickerTime() {
+        val build = TimePickerDialogFragmentArgs.Builder(mCrime.id, mCrime.date).build()
+        findNavController().navigate(
+            R.id.action_CrimeFragment_to_TimePickerDialogFragment,
+            build.toBundle()
+        )
+    }
+
 }
