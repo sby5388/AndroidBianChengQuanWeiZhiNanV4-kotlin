@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.by5388.learn.v4.kotlin.criminalintent.CrimeItemViewModel.CrimeCallback
@@ -34,12 +34,7 @@ class CrimeListFragment : Fragment() {
         setHasOptionsMenu(true)
         mAdapter = CrimeAdapter(object : CrimeCallback {
             override fun onClick(crime: Crime) {
-                val controller = NavHostFragment.findNavController(this@CrimeListFragment)
-                if (controller.currentDestination?.id == R.id.CrimeListFragment) {
-                    controller.navigate(
-                        R.id.action_list_to_detail, CrimeFragment.newBundle(crime.id)
-                    )
-                }
+                toDetail(crime)
             }
         })
     }
@@ -98,8 +93,12 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun toDetail(crime: Crime) {
-        NavHostFragment.findNavController(this@CrimeListFragment)
-            .navigate(R.id.action_list_to_detail, CrimeFragment.newBundle(crime.id))
+        val navController = findNavController()
+        if (navController.currentDestination?.id != R.id.CrimeListFragment) {
+            return
+        }
+        val build = CrimeFragmentArgs.Builder(crime.id).build()
+        navController.navigate(R.id.action_list_to_detail, build.toBundle())
     }
 
     private fun updateUI(crimes: List<Crime>) {

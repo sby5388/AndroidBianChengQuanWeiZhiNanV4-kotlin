@@ -25,6 +25,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.by5388.learn.v4.kotlin.criminalintent.databinding.FragmentCrimeBinding
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
@@ -54,6 +55,7 @@ class CrimeFragment : Fragment() {
 
     private lateinit var mPhotoFile: File
     private lateinit var mPhotoUri: Uri
+    private lateinit var mCrimeFragmentArgs: CrimeFragmentArgs
 
 
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
@@ -79,8 +81,9 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mCrime = Crime()
-        val crimeID: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        mCrimeDetailViewModel.loadCrime(crimeID)
+        arguments?.let {
+            mCrimeFragmentArgs = CrimeFragmentArgs.fromBundle(it)
+        }
         mDateFormat = SimpleDateFormat(
             context?.getString(
                 R.string.date_format
@@ -99,6 +102,7 @@ class CrimeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mCrimeDetailViewModel.loadCrime(mCrimeFragmentArgs.crimeID)
         mBinding.crimeDate.apply {
             text = mDateFormat.format(mCrime.date)
             setOnClickListener {
@@ -195,8 +199,7 @@ class CrimeFragment : Fragment() {
             if (!mPhotoFile.exists()) {
                 return@setOnClickListener
             }
-            val fragment = PhotoFragment.newInstance(mPhotoFile.path)
-            fragmentManager?.let { it1 -> fragment.show(it1, PhotoFragment.TAG) }
+            showPhotoDialog(mPhotoFile.path)
         }
 
 //        _mOnGlobalFocusChangeListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, _ ->
@@ -488,11 +491,9 @@ class CrimeFragment : Fragment() {
         )
     }
 
-    companion object {
-        fun newBundle(crimeId: UUID): Bundle {
-            return Bundle().apply {
-                putSerializable(ARG_CRIME_ID, crimeId)
-            }
-        }
+    private fun showPhotoDialog(filePath: String) {
+        val navController = findNavController()
+        val build = PhotoFragmentArgs.Builder(filePath).build()
+        navController.navigate(R.id.action_CrimeFragment_to_PhotoFragmentDialog, build.toBundle())
     }
 }

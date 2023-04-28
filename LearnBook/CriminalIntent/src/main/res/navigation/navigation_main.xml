@@ -23,9 +23,28 @@
         android:name="com.by5388.learn.v4.kotlin.criminalintent.CrimeFragment"
         android:label="陋习详情"
         tools:layout="@layout/fragment_crime">
+        <argument
+            android:name="crimeID"
+            app:argType="java.util.UUID"
+            app:nullable="false" />
+        <action
+            android:id="@+id/action_CrimeFragment_to_PhotoFragmentDialog"
+            app:destination="@id/PhotoFragmentDialog" />
 
 
     </fragment>
+
+    <dialog
+        android:id="@+id/PhotoFragmentDialog"
+        android:name="com.by5388.learn.v4.kotlin.criminalintent.PhotoFragment"
+        android:label="图片详情"
+        tools:layout="@layout/fragment_photo">
+        <!-- 传递图片路径 -->
+        <argument
+            android:name="filePath"
+            app:argType="string"
+            app:nullable="false" />
+    </dialog>
 
 
 </navigation>
