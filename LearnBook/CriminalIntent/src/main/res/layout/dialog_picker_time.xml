@@ -14,6 +14,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 在ConstraintLayout布局中使用include 需要重新写  android:layout_width，android:layout_height -->
+
     <include
         android:id="@+id/button_bar"
         layout="@layout/dialog_button_bar"
