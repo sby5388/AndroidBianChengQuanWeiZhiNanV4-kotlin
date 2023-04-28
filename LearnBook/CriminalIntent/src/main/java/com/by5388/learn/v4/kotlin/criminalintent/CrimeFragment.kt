@@ -20,6 +20,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -57,6 +60,34 @@ class CrimeFragment : Fragment() {
     private lateinit var mPhotoFile: File
     private lateinit var mPhotoUri: Uri
     private lateinit var mCrimeFragmentArgs: CrimeFragmentArgs
+
+    /**
+     * 读取联系人的名称
+     */
+    private val mContactResultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            handleContactResult(it)
+        }
+
+    /**
+     * 获取拍照的结果
+     */
+    private val mCapPhotoResultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            handleCaptureResult(it)
+        }
+
+    /**
+     * 读取联系人的号码
+     */
+    private val mContactPermissionLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            handleContactPermission(it)
+        }
 
 
     private val mCrimeDetailViewModel: CrimeDetailViewModel by lazy {
@@ -123,8 +154,6 @@ class CrimeFragment : Fragment() {
             }
         }
 
-
-
         mCrimeDetailViewModel.mCrimeLiveData
             .observe(viewLifecycleOwner) { crime ->
                 crime?.let {
@@ -155,7 +184,7 @@ class CrimeFragment : Fragment() {
         mBinding.crimeSuspect.apply {
             val pickIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             setOnClickListener {
-                startActivityForResult(pickIntent, REQUEST_CODE_CONTACT)
+                mContactResultLauncher.launch(pickIntent)
             }
             val resolveActivity: ResolveInfo? = requireActivity().packageManager
                 .resolveActivity(pickIntent, PackageManager.MATCH_DEFAULT_ONLY)
@@ -202,7 +231,7 @@ class CrimeFragment : Fragment() {
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
                 }
-                startActivityForResult(captureImage, REQUEST_CODE_PHOTO)
+                mCapPhotoResultLauncher.launch(captureImage)
             }
         }
         mBinding.crimePhoto.setOnClickListener {
@@ -266,16 +295,10 @@ class CrimeFragment : Fragment() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    private fun handleContactPermission(granted: Boolean) {
         Log.d(TAG, "onRequestPermissionsResult: ")
-        if (requestCode == REQUEST_CODE_PERMISSION_READ_CONTACTS) {
-            if (grantedContactPermission()) {
+        if (true) {
+            if (granted) {
                 Snackbar.make(
                     mBinding.viewRoot,
                     R.string.user_granted_permission,
@@ -284,14 +307,6 @@ class CrimeFragment : Fragment() {
                     callPhone(getNumber())
                 }.show()
                 Log.d(TAG, "onRequestPermissionsResult: grantedContactPermission")
-            } else if (grantResults.isEmpty()) {
-                Snackbar.make(
-                    mBinding.viewRoot,
-                    R.string.user_cancel,
-                    Snackbar.LENGTH_INDEFINITE
-                ).setAction(android.R.string.ok) {
-                }.show()
-                Log.d(TAG, "onRequestPermissionsResult: isEmpty")
             } else {
                 val shouldShow = shouldShowRequestPermissionRationale()
                 Log.d(TAG, "onRequestPermissionsResult: shouldShow =$shouldShow")
@@ -304,7 +319,9 @@ class CrimeFragment : Fragment() {
                         requestReadContactPermission()
                     }.show()
                 } else {
-                    // FIXME: 2021/6/7 本来用户点击拒绝且不再提示，应该走这里的，却没有调用到整个onRequestPermissionsResult
+                    // 2021/6/7 本来用户点击拒绝且不再提示，应该走这里的，却没有调用到整个onRequestPermissionsResult
+                    //  该问题已解决：在fragment中使用 ActivityCompat.requestPermissions，其结果只会回调在activity中而不会在fragment中回调
+                    //
                     Log.d(TAG, "onRequestPermissionsResult:用户拒绝，且不再提示 ")
                     Snackbar.make(
                         mBinding.viewRoot,
@@ -380,11 +397,7 @@ class CrimeFragment : Fragment() {
 
 
     private fun requestReadContactPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(Manifest.permission.READ_CONTACTS),
-            REQUEST_CODE_PERMISSION_READ_CONTACTS
-        )
+        mContactPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
     }
 
     private fun updateUI() {
@@ -528,6 +541,26 @@ class CrimeFragment : Fragment() {
             R.id.action_CrimeFragment_to_TimePickerDialogFragment,
             build.toBundle()
         )
+    }
+
+
+    private fun handleContactResult(result: ActivityResult) {
+        if (result.resultCode != Activity.RESULT_OK) {
+            return
+        }
+        result.data?.let {
+            getSuspect(it)
+        }
+    }
+
+    private fun handleCaptureResult(result: ActivityResult) {
+        if (result.resultCode != Activity.RESULT_OK) {
+            return
+        }
+        result.data?.let {
+            revokePermission()
+            updatePhotoView()
+        }
     }
 
 }
