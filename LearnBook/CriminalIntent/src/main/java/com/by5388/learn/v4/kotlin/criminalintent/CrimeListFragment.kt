@@ -66,6 +66,7 @@ class CrimeListFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        mBinding.crimeRecyclerView.adapter = null
         _mBinding = null
         super.onDestroyView()
     }
