@@ -8,8 +8,18 @@
         android:required="false" />
 
     <queries>
+        <!-- 获取拍照的图片 -->
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
+
+        </intent>
+        <!-- 读取联系人 -->
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data
+                android:host="com.android.contacts"
+                android:mimeType="*/*"
+                android:scheme="content" />
 
         </intent>
     </queries>
