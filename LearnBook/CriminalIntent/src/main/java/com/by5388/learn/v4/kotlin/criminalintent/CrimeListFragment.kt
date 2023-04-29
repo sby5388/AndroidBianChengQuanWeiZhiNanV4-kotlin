@@ -1,14 +1,20 @@
 package com.by5388.learn.v4.kotlin.criminalintent
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.by5388.learn.v4.kotlin.criminalintent.CrimeItemViewModel.CrimeCallback
 import com.by5388.learn.v4.kotlin.criminalintent.databinding.FragmentCrimeListBinding
+import com.google.android.material.snackbar.Snackbar
+import java.util.concurrent.TimeUnit
 
 /**
  * @author  admin  on 2021/6/5.
@@ -27,6 +33,58 @@ class CrimeListFragment : Fragment() {
 
     private val mCrimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(requireActivity()).get(CrimeListViewModel::class.java)
+    }
+    private var mSnackbar: Snackbar? = null
+
+    private val mHandler = Handler(Looper.getMainLooper(), Handler.Callback {
+        val what = it.what
+        if (ACTION_DELETE == what) {
+            val crime = it.obj as Crime?
+            crime?.let {
+                mCrimeListViewModel.delete(crime)
+            }
+            mSnackbar?.dismiss()
+            true
+        }
+
+        true
+    })
+
+
+    /**
+     * 需要实现左右滑动item时 删除该crime
+     */
+    private val mTouchCallback: ItemTouchHelper.Callback = object : ItemTouchHelper.Callback() {
+        override fun getMovementFlags(
+            recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            //0：不支持拖拽，ItemTouchHelper.DOWN:支持向下拖拽；ItemTouchHelper.UP:支持向上拖拽；这里都不需要
+            val dragFlags = 0
+            //0:不支持滑动，ItemTouchHelper.START|LEFT 支持从左向右滑动时触发；ItemTouchHelper.END|RIGHT 支持从右向左滑动时触发
+            val swipeFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            return makeMovementFlags(dragFlags, swipeFlags)
+        }
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            // TODO: 这里待确定
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            //删除之后 修改数据库，隐藏该记录，然后提示一个SnackBar来提示用户撤销，如果3秒钟后用户没有撤销，则删除该记录
+            val crime = mAdapter.currentList[viewHolder.bindingAdapterPosition]
+            crime.hide = true
+            mCrimeListViewModel.saveCrime(crime)
+            showSnackBar(crime)
+        }
+    }
+
+    private val mItemTouchHelper: ItemTouchHelper by lazy {
+        ItemTouchHelper(mTouchCallback)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +116,7 @@ class CrimeListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
             setHasFixedSize(true)
+            mItemTouchHelper.attachToRecyclerView(this)
         }
 
         mCrimeListViewModel.mCrimesListLiveData.observe(viewLifecycleOwner) { crimes ->
@@ -118,4 +177,30 @@ class CrimeListFragment : Fragment() {
         }
 
     }
+
+    private fun showSnackBar(hideCrime: Crime) {
+
+
+        val snackBar = Snackbar.make(
+            mBinding.rootView, "撤销删除记录 ${hideCrime.title} ?", Snackbar.LENGTH_INDEFINITE
+        )
+        snackBar.setAction("撤销") {
+            mHandler.removeMessages(ACTION_DELETE)
+            hideCrime.hide = false
+            mCrimeListViewModel.saveCrime(hideCrime)
+
+        }
+        mSnackbar = snackBar
+        snackBar.show()
+
+        val message = mHandler.obtainMessage(ACTION_DELETE)
+        message.obj = hideCrime
+        mHandler.sendMessageDelayed(message, TimeUnit.SECONDS.toMillis(3))
+    }
+
+    companion object {
+        private const val ACTION_DELETE = 100
+    }
+
+
 }

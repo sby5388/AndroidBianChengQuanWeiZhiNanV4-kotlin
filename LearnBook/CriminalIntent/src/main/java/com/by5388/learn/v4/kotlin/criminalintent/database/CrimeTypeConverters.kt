@@ -15,7 +15,6 @@ class CrimeTypeConverters {
 
     @TypeConverter
     fun toDate(millisSinceEpoch: Long?): Date? {
-        // TODO: 2021/6/5 let的使用
         return millisSinceEpoch?.let {
             Date(it)
         }
@@ -23,7 +22,7 @@ class CrimeTypeConverters {
 
     @TypeConverter
     fun toUUID(uuid: String?): UUID? {
-        return UUID.fromString(uuid);
+        return UUID.fromString(uuid)
     }
 
     @TypeConverter

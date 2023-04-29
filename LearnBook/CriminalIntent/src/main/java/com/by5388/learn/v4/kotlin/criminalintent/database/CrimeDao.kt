@@ -1,10 +1,7 @@
 package com.by5388.learn.v4.kotlin.criminalintent.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.by5388.learn.v4.kotlin.criminalintent.Crime
 import java.util.*
 
@@ -14,7 +11,10 @@ import java.util.*
 @Dao
 interface CrimeDao {
 
-    @Query("select * from Crime")
+    /**
+     * 只显示没有被隐藏的
+     */
+    @Query("select * from Crime where hide = 0 ")
     fun getCrimes(): LiveData<List<Crime>>
 
     @Query("select * from Crime where id = (:id)")
@@ -29,5 +29,8 @@ interface CrimeDao {
 
     @Query("select * from Crime where id = (:id)")
     fun queryCrime(id: UUID): Crime?
+
+    @Delete
+    fun deleteCrime(crime: Crime)
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.by5388.learn.v4.kotlin.criminalintent.database.CrimeDatabase
 import com.by5388.learn.v4.kotlin.criminalintent.database.migration_1_2
+import com.by5388.learn.v4.kotlin.criminalintent.database.migration_2_3
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
@@ -25,6 +26,7 @@ class CrimeRepository private constructor(context: Context) {
         )
             //add database version upgrade
             .addMigrations(migration_1_2)
+            .addMigrations(migration_2_3)
             .build()
 
     private val mCrimeDao = mDataBase.crimeDao()
@@ -61,6 +63,14 @@ class CrimeRepository private constructor(context: Context) {
             mCrimeDao.insertCrime(crime)
         }
     }
+
+    fun deleteCrime(crime: Crime) {
+        mExecutor.execute {
+            mCrimeDao.deleteCrime(crime)
+        }
+
+    }
+
 
     fun getPhotoFile(crime: Crime): File = File(mFileDir, crime.photoFileName)
 

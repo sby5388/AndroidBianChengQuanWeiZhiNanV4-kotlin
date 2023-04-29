@@ -17,7 +17,8 @@ data class Crime(
     var title: String = "",
     var date: Date = Date(),
     var suspect: String = "",
-    var isSolved: Boolean = false
+    var isSolved: Boolean = false,
+    var hide: Boolean = false
 ) {
     //20210608 this property will not write into database
     @Ignore

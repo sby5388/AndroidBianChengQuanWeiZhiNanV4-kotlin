@@ -11,7 +11,7 @@ import com.by5388.learn.v4.kotlin.criminalintent.Crime
  * @author  admin  on 2021/6/5.
  * exportSchema=false:禁用导出功能
  */
-@Database(entities = [Crime::class], version = 2)
+@Database(entities = [Crime::class], version = 3)
 @TypeConverters(CrimeTypeConverters::class)
 abstract class CrimeDatabase : RoomDatabase() {
     abstract fun crimeDao(): CrimeDao
@@ -30,3 +30,13 @@ val migration_1_2 = object : Migration(1, 2) {
         )
     }
 }
+
+//20230429 更新数据库 增加一列显示隐藏该记录的，默认为显示
+val migration_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("alter table crime add column hide INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+
+

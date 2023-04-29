@@ -16,4 +16,13 @@ class CrimeListViewModel : ViewModel() {
     fun loadData() {
         mCrimeRepository.getCrimes()
     }
+
+    fun saveCrime(crime: Crime) {
+        mCrimeRepository.updateCrime(crime)
+    }
+
+    fun delete(crime: Crime) {
+        mCrimeRepository.deleteCrime(crime)
+    }
+
 }
