@@ -5,6 +5,7 @@
     <string name="crime_details_label">Details</string>
     <string name="crime_solved_label">Solved</string>
     <string name="call_police">Call Police</string>
+    <string name="date_format_with_time">EEEE,yyyy/MM/dd  HH:mm:ss</string>
     <string name="date_format">EEEE,yyyy/MM/dd</string>
     <string name="time_format">HH:mm:ss</string>
     <string name="new_crime">New Crime</string>

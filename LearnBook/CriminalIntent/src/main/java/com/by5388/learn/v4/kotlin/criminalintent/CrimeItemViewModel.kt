@@ -11,7 +11,7 @@ import java.util.*
 class CrimeItemViewModel(private val context: Context) : BaseObservable() {
     private var mCrime: Crime? = null
     private val mDateFormat =
-        SimpleDateFormat(context.getString(R.string.date_format), Locale.getDefault())
+        SimpleDateFormat(context.getString(R.string.date_format_with_time), Locale.getDefault())
     var callback: CrimeCallback? = null
 
     init {
