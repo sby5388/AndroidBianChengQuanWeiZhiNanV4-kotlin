@@ -16,11 +16,14 @@
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:background="@drawable/crime_item_bg_drawable"
+        android:backgroundTint="@color/crime_item_bg_color"
+        android:clickable="true"
         android:contentDescription="@{viewModel.contentDescription}"
+        android:focusable="true"
         android:onClick="@{v->viewModel.toDetail(v)}">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/crime_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -35,7 +38,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="Crime Title" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/crime_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,14 +51,18 @@
             tools:text="2022年09月17日 19:49:20" />
 
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/crime_item_bg_drawable"
+            android:backgroundTint="@color/crime_item_bg_color"
+            android:clickable="true"
             android:contentDescription="is solved"
+            android:focusable="true"
             android:onClick="@{v->viewModel.callPolice(v)}"
             android:visibility="@{viewModel.imageVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
