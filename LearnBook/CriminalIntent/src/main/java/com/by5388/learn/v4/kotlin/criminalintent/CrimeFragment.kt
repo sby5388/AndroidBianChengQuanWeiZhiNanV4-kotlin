@@ -27,7 +27,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.by5388.learn.v4.kotlin.criminalintent.databinding.FragmentCrimeBinding
 import com.google.android.material.snackbar.Snackbar
@@ -40,12 +39,6 @@ import java.util.*
  * @author  admin  on 2021/6/5.
  */
 private const val TAG = "CrimeFragment"
-private const val DIALOG_DATE = "DialogDate"
-private const val REQUEST_CODE_DATE = 1
-private const val REQUEST_CODE_CONTACT = 2
-private const val REQUEST_CODE_PERMISSION_READ_CONTACTS = 3
-private const val REQUEST_CODE_PHOTO = 4
-private const val ARG_CRIME_ID = "crime_id"
 private const val DATE_FORMAT = "EEE,MMM,dd"
 
 class CrimeFragment : Fragment() {
@@ -269,30 +262,12 @@ class CrimeFragment : Fragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 Log.d(TAG, "onOptionsItemSelected: 返回")
-                NavHostFragment.findNavController(this@CrimeFragment)
-                    .popBackStack()
+                findNavController().popBackStack()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
 
-    }
-
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) {
-            return
-        }
-        if (requestCode == REQUEST_CODE_DATE) {
-            // TODO: 2021/6/6
-        } else if (requestCode == REQUEST_CODE_CONTACT && data != null) {
-            getSuspect(data)
-        } else if (requestCode == REQUEST_CODE_PHOTO) {
-            revokePermission()
-            updatePhotoView()
-        }
     }
 
     private fun handleContactPermission(granted: Boolean) {

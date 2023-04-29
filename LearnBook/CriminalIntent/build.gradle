@@ -18,7 +18,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        //todo fix "chema export directory is not provided to the annotation processor so we cannot export the schema.
+        //todo fix "schema export directory is not provided to the annotation processor so we cannot export the schema.
         //  You can either provide `room.schemaLocation` annotation processor argument OR set exportSchema to false.
         //  public abstract class CrimeDatabase extends androidx.room.RoomDatabase {"
         // https://stackoverflow.com/questions/44322178/room-schema-export-directory-is-not-provided-to-the-annotation-processor-so-we
@@ -55,13 +55,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'androidx.room:room-runtime:2.3.0'
-    kapt 'androidx.room:room-compiler:2.3.0'
+    implementation 'androidx.room:room-runtime:2.4.2'
+    kapt 'androidx.room:room-compiler:2.4.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -72,6 +72,7 @@ dependencies {
 
 
     // https://mvnrepository.com/artifact/com.squareup.leakcanary/leakcanary-android
-    implementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:2.9.1'
 
 }
