@@ -1,7 +1,6 @@
 package com.by5388.learn.v4.kotlin.geoquiz
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +10,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +46,15 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this).get(QuizViewModel::class.java)
     }
 
+    /**
+     * 请求作弊,并处理结果，替代原来的[Activity.startActivityForResult]
+     * 和[Activity.onActivityResult]
+     * fragment中也是如此
+     * 注意：ActivityResultLauncher 这个玩意只能在STARTED之前中注册（包括了构造方法以及onCreate等之中）
+     * "LifecycleOwners must call register before they are STARTED"
+     */
+    private lateinit var mRequestCheat: ActivityResultLauncher<Intent>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: ")
@@ -57,10 +68,16 @@ class MainActivity : AppCompatActivity() {
         mButtonPre = findViewById(R.id.pre_button)
         mQuestionTextView = findViewById(R.id.question_text_view)
 
+        mRequestCheat = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            handleCheatResult(it)
+        }
+
         val quizViewModel = mQuizViewModel
         Log.d(TAG, "onCreate: mQuizViewModel = $quizViewModel")
 
-        // TODO: 2021/6/5 当 savedInstanceState==null 时，取0
+        //2021/6/5 当 savedInstanceState==null 时，取0
         val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
         quizViewModel.mCurrentIndex = currentIndex
 
@@ -96,22 +113,6 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState.putInt(KEY_INDEX, mQuizViewModel.mCurrentIndex)
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) {
-            return
-        }
-        if (requestCode == REQUEST_CODE_CHEAT) {
-            val cheat = CheatActivity.getShowAnswer(data)
-            if (cheat) {
-                //只要作弊了就不会重新更改为未作弊
-                mQuizViewModel.setCurrentQuestionCheat(true)
-            }
-            updateQuestion()
-        }
-    }
-
 
     private fun updateQuestion() {
         val textResId = mQuizViewModel.currentQuestionText
@@ -152,11 +153,11 @@ class MainActivity : AppCompatActivity() {
     private fun toCheatActivity(view: View) {
         val newIntent = CheatActivity.newIntent(this, mQuizViewModel.currentQuestionAnswer)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val options = ActivityOptions
+            val options = ActivityOptionsCompat
                 .makeClipRevealAnimation(view, 0, 0, view.width, view.height)
-            startActivityForResult(newIntent, REQUEST_CODE_CHEAT, options.toBundle())
+            mRequestCheat.launch(newIntent, options)
         } else {
-            startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
+            mRequestCheat.launch(newIntent)
         }
     }
 
@@ -164,13 +165,26 @@ class MainActivity : AppCompatActivity() {
         val newIntent = CheatActivity.newIntent(this, mQuizViewModel.currentQuestionAnswer)
         val optionsCompat =
             ActivityOptionsCompat.makeClipRevealAnimation(view, 0, 0, view.width, view.height)
-        startActivityForResult(newIntent, REQUEST_CODE_CHEAT, optionsCompat.toBundle())
+        mRequestCheat.launch(newIntent, optionsCompat)
     }
 
     private fun toCheatActivity2(view: View) {
         val newIntent = CheatActivity.newIntent(
             this@MainActivity, mQuizViewModel.currentQuestionAnswer
         )
-        startActivityForResult(newIntent, REQUEST_CODE_CHEAT)
+        mRequestCheat.launch(newIntent)
+    }
+
+    private fun handleCheatResult(result: ActivityResult) {
+        if (result.resultCode != RESULT_OK) {
+            return
+        }
+        val cheat = CheatActivity.getShowAnswer(result.data)
+        if (cheat) {
+            //只要作弊了就不会重新更改为未作弊
+            mQuizViewModel.setCurrentQuestionCheat(true)
+        }
+        updateQuestion()
+
     }
 }
