@@ -7,7 +7,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
+@Deprecated(
+    message = "使用Navigation", ReplaceWith(
+        "PhotoGalleryNavigationActivity",
+         "com.by5388.learn.v4.kotlin.photogallery.navigation.PhotoGalleryNavigationActivity"
+    )
+)
 class PhotoPageActivity : AppCompatActivity() {
+
     private lateinit var mFragment: PhotoPageFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,9 +6,7 @@ import android.os.HandlerThread
 import android.os.Message
 import android.util.Log
 import androidx.collection.LruCache
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "ThumbnailDownloader"
@@ -71,7 +69,8 @@ class ThumbnailDownloader<in T>(
      * 那么它就不会被垃圾回收，自然就会内存泄漏，
      * 进 而导致它引用的ThumbnailDownloader实例也引发内存泄漏问题。
      */
-    private fun handleRequest(target: T) {
+    private fun handleRequest(target: T?) {
+        target ?: return
         val url = mRequestMap[target] ?: return
         val bitmap = mCache[url] ?: mFlickrFetchr.fetchPhoto(url) ?: return
         mResponseHandler.post(Runnable {
@@ -92,12 +91,11 @@ class ThumbnailDownloader<in T>(
 
 
     val fragmentLifecycleObserver: LifecycleObserver =
-        object : LifecycleObserver {
+        object : DefaultLifecycleObserver {
             /**
              * 当生命周期所有者创建时，回调，通过注解
              */
-            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-            fun setup() {
+            override fun onCreate(owner: LifecycleOwner) {
                 Log.i(TAG, "setup: Starting background thread")
                 start()
                 looper
@@ -106,14 +104,9 @@ class ThumbnailDownloader<in T>(
             /**
              * 当生命周期所有者销毁时，回调，通过注解
              */
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun tearDown() {
+            override fun onDestroy(owner: LifecycleOwner) {
                 Log.i(TAG, "Destroying background thread")
                 quit()
-            }
-
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun clearQueue() {
                 Log.i(TAG, "Clearing all requests from queue")
                 mRequestHandler.removeMessages(MESSAGE_DOWNLOAD)
                 mRequestMap.clear()

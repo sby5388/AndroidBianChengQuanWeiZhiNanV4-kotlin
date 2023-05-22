@@ -12,7 +12,7 @@ data class GalleryItem(
     var owner: String = ""
 ) {
     /**
-     * 大图的uri
+     * 大图的uri,所在的网页链接，并不是图片的下载链接
      * https://www.flickr.com/photos/owner/id
      */
     val mPhotoPageUri: Uri
