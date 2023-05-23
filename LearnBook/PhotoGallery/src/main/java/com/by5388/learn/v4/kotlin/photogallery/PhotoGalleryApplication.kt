@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.facebook.drawee.backends.pipeline.Fresco
 
 const val NOTIFICATION_CHANNEL_ID = "flickr_poll"
 
@@ -12,6 +13,7 @@ class PhotoGalleryApplication : Application() {
         super.onCreate()
         //注册 通知渠道
         registerNotificationChannel()
+        Fresco.initialize(this)
     }
 
     private fun registerNotificationChannel() {

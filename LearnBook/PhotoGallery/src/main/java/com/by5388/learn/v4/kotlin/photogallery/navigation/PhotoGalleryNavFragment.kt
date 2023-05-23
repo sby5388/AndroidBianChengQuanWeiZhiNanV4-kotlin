@@ -24,6 +24,7 @@ import com.by5388.learn.v4.kotlin.photogallery.base.BasePhotoAdapter
 import com.by5388.learn.v4.kotlin.photogallery.base.BasePhotoHolder
 import com.by5388.learn.v4.kotlin.photogallery.base.GalleryClick
 import com.by5388.learn.v4.kotlin.photogallery.databinding.FragmentPhotoGalleryBinding
+import com.by5388.learn.v4.kotlin.photogallery.fresco.FrescoAdapter
 import com.by5388.learn.v4.kotlin.photogallery.glide.GlidePhotoPhotoAdapter
 import com.by5388.learn.v4.kotlin.photogallery.list.PhotoListAdapter
 import com.by5388.learn.v4.kotlin.photogallery.list.PhotoListHolder
@@ -51,6 +52,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
     private lateinit var mMenuTypeDefault: MenuItem
     private lateinit var mMenuTypeGlide: MenuItem
     private lateinit var mMenuTypePicasso: MenuItem
+    private lateinit var mMenuTypeFresco: MenuItem
 
     private lateinit var mPhotoAdapter: BasePhotoAdapter<out BasePhotoHolder>
 
@@ -58,21 +60,10 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
     private val mBinding: FragmentPhotoGalleryBinding
         get() = _binding!!
 
+    private var mAdapterType = ADAPTER_TYPE_DEFAULT
     private val mGalleryClick: GalleryClick = object : GalleryClick {
         override fun onGalleryClick(item: GalleryItem?) {
-            item?.let {
-                mCallback.onClick(it)
-            }
-        }
-    }
-
-    private var mAdapterType = ADAPTER_TYPE_DEFAULT
-
-//    private lateinit var mAdapter: ListAdapter<GalleryItem, *>
-
-
-    private val mCallback: PhotoHolder.ItemCallback = object : PhotoHolder.ItemCallback {
-        override fun onClick(item: GalleryItem) {
+            item ?: return
             if (mMenuItemToggleChromeTab.isChecked) {
                 CustomTabsIntent.Builder()
                     .setDefaultColorSchemeParams(
@@ -201,6 +192,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         mMenuTypeDefault = menu.findItem(R.id.menu_adapter_default)
         mMenuTypeGlide = menu.findItem(R.id.menu_adapter_glide)
         mMenuTypePicasso = menu.findItem(R.id.menu_adapter_picasso)
+        mMenuTypeFresco = menu.findItem(R.id.menu_adapter_fresco)
 
     }
 
@@ -232,6 +224,10 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
                 updateAdapter(ADAPTER_TYPE_PICASSO)
                 true
             }
+            R.id.menu_adapter_fresco -> {
+                updateAdapter(ADAPTER_TYPE_FRESCO)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -258,6 +254,9 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         mMenuTypePicasso.isEnabled = (mAdapterType != ADAPTER_TYPE_PICASSO)
         mMenuTypePicasso.isChecked = (mAdapterType == ADAPTER_TYPE_PICASSO)
 
+        mMenuTypeFresco.isEnabled = (mAdapterType != ADAPTER_TYPE_FRESCO)
+        mMenuTypeFresco.isChecked = (mAdapterType == ADAPTER_TYPE_FRESCO)
+
 
     }
 
@@ -277,20 +276,24 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         const val ADAPTER_TYPE_DEFAULT = 0
         const val ADAPTER_TYPE_GLIDE = 1
         const val ADAPTER_TYPE_PICASSO = 2
+        const val ADAPTER_TYPE_FRESCO = 3
     }
 
 
     private fun getAdapter(adapterType: Int): BasePhotoAdapter<out BasePhotoHolder> {
         return when (adapterType) {
 
+            ADAPTER_TYPE_DEFAULT -> {
+                PhotoListAdapter(mGalleryClick, mThumbnailDownloader)
+            }
             ADAPTER_TYPE_GLIDE -> {
                 GlidePhotoPhotoAdapter(mGalleryClick)
             }
             ADAPTER_TYPE_PICASSO -> {
                 PicassoPhotoAdapter(mGalleryClick)
             }
-            ADAPTER_TYPE_DEFAULT -> {
-                PhotoListAdapter(mGalleryClick, mThumbnailDownloader)
+            ADAPTER_TYPE_FRESCO -> {
+                FrescoAdapter(mGalleryClick)
             }
             else -> throw RuntimeException()
         }

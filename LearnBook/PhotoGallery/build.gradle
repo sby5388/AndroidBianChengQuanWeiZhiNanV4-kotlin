@@ -85,4 +85,10 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.8'
 
 
+    // https://mvnrepository.com/artifact/com.facebook.fresco/fresco
+    //noinspection GradleDependency
+    //目前最新版的 3.0.0 有bug,不能使用
+    implementation 'com.facebook.fresco:fresco:2.6.0'
+
+
 }
