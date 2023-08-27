@@ -51,8 +51,6 @@ android {
 }
 
 dependencies {
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -72,7 +70,7 @@ dependencies {
 
 
     // https://mvnrepository.com/artifact/com.squareup.leakcanary/leakcanary-android
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:2.9.1'
 
 }
