@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
@@ -61,7 +62,12 @@ class PollWorker(private val mContext: Context, workerParameters: WorkerParamete
      */
     private fun showNotification() {
         val newIntent = PhotoGalleryActivity.newIntent(mContext)
-        val pendingIntent = PendingIntent.getActivity(mContext, 0, newIntent, 0)
+        val flag =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else PendingIntent.FLAG_UPDATE_CURRENT
+
+        val pendingIntent = PendingIntent.getActivity(mContext, 0, newIntent, flag)
+
         val resources = mContext.resources
         val notification = NotificationCompat.Builder(mContext, NOTIFICATION_CHANNEL_ID)
             //记号文字：不会显示出来，但是会发送给Android辅助服务使用，如屏幕阅读器会用它通知有视力障碍的用户

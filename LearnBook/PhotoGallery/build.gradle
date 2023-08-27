@@ -63,7 +63,10 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:5.2.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
     //add for workManager
-    implementation "android.arch.work:work-runtime:1.0.1"
+    //https://www.coder.work/article/7879416
+    //implementation "android.arch.work:work-runtime:1.0.1"
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+
     //add for Chrome Custom Tab
     implementation 'androidx.browser:browser:1.4.0'
 
