@@ -44,15 +44,16 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
             }
         }
     }
-    private lateinit var mMenuProgressBar: MenuItem
-    private lateinit var mMenuItemTogglePolling: MenuItem
-    private lateinit var mMenuItemToggleChromeTab: MenuItem
-    private lateinit var mPhotoGalleryViewModel: PhotoGalleryViewModel
+    private var mMenuProgressBar: MenuItem? = null
+    private var mMenuItemTogglePolling: MenuItem? = null
+    private var mMenuItemToggleChromeTab: MenuItem? = null
+    private var mMenuTypeDefault: MenuItem? = null
+    private var mMenuTypeGlide: MenuItem? = null
+    private var mMenuTypePicasso: MenuItem? = null
+    private var mMenuTypeFresco: MenuItem? = null
+
     private lateinit var mThumbnailDownloader: ThumbnailDownloader<PhotoListHolder>
-    private lateinit var mMenuTypeDefault: MenuItem
-    private lateinit var mMenuTypeGlide: MenuItem
-    private lateinit var mMenuTypePicasso: MenuItem
-    private lateinit var mMenuTypeFresco: MenuItem
+    private lateinit var mPhotoGalleryViewModel: PhotoGalleryViewModel
 
     private lateinit var mPhotoAdapter: BasePhotoAdapter<out BasePhotoHolder>
 
@@ -64,7 +65,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
     private val mGalleryClick: GalleryClick = object : GalleryClick {
         override fun onGalleryClick(item: GalleryItem?) {
             item ?: return
-            if (mMenuItemToggleChromeTab.isChecked) {
+            if (mMenuItemToggleChromeTab?.isChecked == true) {
                 CustomTabsIntent.Builder()
                     .setDefaultColorSchemeParams(
                         CustomTabColorSchemeParams.Builder()
@@ -124,6 +125,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 //        mPhotoAdapter = GlidePhotoPhotoAdapter(mGalleryClick)
+        mAdapterType = QueryPreferences.getAdapterType(requireContext(), mAdapterType)
         mPhotoAdapter = getAdapter(mAdapterType)
         mBinding.photoRecyclerView.adapter = mPhotoAdapter
 
@@ -240,22 +242,23 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         } else {
             R.string.start_polling
         }
-        mMenuItemTogglePolling.isChecked = isPolling
-        mMenuItemTogglePolling.title = getString(toggleItemTitle)
-        mMenuItemToggleChromeTab.isChecked = QueryPreferences.isUseChromeCustomTab(requireContext())
+        mMenuItemTogglePolling?.isChecked = isPolling
+        mMenuItemTogglePolling?.title = getString(toggleItemTitle)
+        mMenuItemToggleChromeTab?.isChecked =
+            QueryPreferences.isUseChromeCustomTab(requireContext())
 
 
-        mMenuTypeDefault.isEnabled = (mAdapterType != ADAPTER_TYPE_DEFAULT)
-        mMenuTypeDefault.isChecked = (mAdapterType == ADAPTER_TYPE_DEFAULT)
+        mMenuTypeDefault?.isEnabled = (mAdapterType != ADAPTER_TYPE_DEFAULT)
+        mMenuTypeDefault?.isChecked = (mAdapterType == ADAPTER_TYPE_DEFAULT)
 
-        mMenuTypeGlide.isEnabled = (mAdapterType != ADAPTER_TYPE_GLIDE)
-        mMenuTypeGlide.isChecked = (mAdapterType == ADAPTER_TYPE_GLIDE)
+        mMenuTypeGlide?.isEnabled = (mAdapterType != ADAPTER_TYPE_GLIDE)
+        mMenuTypeGlide?.isChecked = (mAdapterType == ADAPTER_TYPE_GLIDE)
 
-        mMenuTypePicasso.isEnabled = (mAdapterType != ADAPTER_TYPE_PICASSO)
-        mMenuTypePicasso.isChecked = (mAdapterType == ADAPTER_TYPE_PICASSO)
+        mMenuTypePicasso?.isEnabled = (mAdapterType != ADAPTER_TYPE_PICASSO)
+        mMenuTypePicasso?.isChecked = (mAdapterType == ADAPTER_TYPE_PICASSO)
 
-        mMenuTypeFresco.isEnabled = (mAdapterType != ADAPTER_TYPE_FRESCO)
-        mMenuTypeFresco.isChecked = (mAdapterType == ADAPTER_TYPE_FRESCO)
+        mMenuTypeFresco?.isEnabled = (mAdapterType != ADAPTER_TYPE_FRESCO)
+        mMenuTypeFresco?.isChecked = (mAdapterType == ADAPTER_TYPE_FRESCO)
 
 
     }
@@ -304,6 +307,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         if (mAdapterType == adapterType) {
             return
         }
+        QueryPreferences.setAdapterType(requireContext(), adapterType)
         val currentList = mPhotoAdapter.currentList
         mPhotoAdapter = getAdapter(adapterType)
         mBinding.photoRecyclerView.adapter = mPhotoAdapter
@@ -348,7 +352,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
      * 显示标题栏进度指示器
      */
     private fun showLoadingProgress() {
-        mMenuProgressBar.isVisible = true
+        mMenuProgressBar?.isVisible = true
 
     }
 
@@ -357,7 +361,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
      * 隐藏标题栏进度指示器
      */
     private fun hideLoadingProgress() {
-        mMenuProgressBar.isVisible = false
+        mMenuProgressBar?.isVisible = false
     }
 
     private fun toggleUseChromeCustomTab() {
@@ -369,7 +373,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         val isPolling = QueryPreferences.isPolling(requireContext())
         if (isPolling) {
             Log.d(TAG, "togglePolling: stop polling")
-            WorkManager.getInstance().cancelAllWorkByTag(POLL_WORK)
+            WorkManager.getInstance(requireContext()).cancelAllWorkByTag(POLL_WORK)
         } else {
             Log.d(TAG, "togglePolling: start polling")
             //设置work启动的条件
@@ -391,7 +395,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
                 //增加网络类型限制
                 .setConstraints(constraints)
                 .build()
-            WorkManager.getInstance()
+            WorkManager.getInstance(requireContext())
                 // TODO: 2021/7/17 各个参数的含义
                 //  名称；当前的服务策略；网络服务请求(要做的事情)
                 //  名称参数：唯一性，标识网络请求，停止服务时引用

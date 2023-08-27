@@ -28,4 +28,9 @@ class MainActivity : AppCompatActivity() {
         return (NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp())
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        setSupportActionBar(null)
+    }
 }

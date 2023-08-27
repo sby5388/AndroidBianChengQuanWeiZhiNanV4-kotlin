@@ -27,6 +27,8 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             force 'org.xerial:sqlite-jdbc:3.34.0'
+            //最新版3.0.0 有bug
+            force 'com.facebook.fresco:fresco:2.6.0'
         }
     }
 }

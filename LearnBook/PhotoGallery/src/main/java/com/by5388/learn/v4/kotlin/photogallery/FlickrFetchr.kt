@@ -140,11 +140,15 @@ class FlickrFetchr {
      */
     @WorkerThread
     fun fetchPhoto(url: String): Bitmap? {
-        val response: Response<ResponseBody> = mFlickrApi.fetchUrlBytes(url).execute()
-        //todo use:会自动调用Closeable 的close 方法
-        val bitmap: Bitmap? = response.body()?.byteStream()?.use(BitmapFactory::decodeStream)
-        Log.i(TAG, "Decoded bitmap=$bitmap from Response=$response")
-        return bitmap
+        return try {
+            val response: Response<ResponseBody> = mFlickrApi.fetchUrlBytes(url).execute()
+            //todo use:会自动调用Closeable 的close 方法
+            val bitmap: Bitmap? = response.body()?.byteStream()?.use(BitmapFactory::decodeStream)
+            Log.i(TAG, "Decoded bitmap=$bitmap from Response=$response")
+            bitmap
+        } catch (e: Exception) {
+            null
+        }
     }
 
 

@@ -89,8 +89,11 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.facebook.fresco/fresco
     //noinspection GradleDependency
-    //目前最新版的 3.0.0 有bug,不能使用
-    implementation 'com.facebook.fresco:fresco:3.0.0'
+    //目前最新版的 3.0.0 有bug,不能使用 https://www.modb.pro/db/197538
+    //noinspection GradleDependency
+    implementation 'com.facebook.fresco:fresco:2.6.0'
+
+    implementation "androidx.preference:preference-ktx:1.2.0"
 
 
 }
