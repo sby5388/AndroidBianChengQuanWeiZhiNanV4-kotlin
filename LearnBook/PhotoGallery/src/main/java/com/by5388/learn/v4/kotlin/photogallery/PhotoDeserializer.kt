@@ -1,5 +1,7 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
+import android.text.TextUtils
+import android.util.Log
 import com.by5388.learn.v4.kotlin.photogallery.api.PhotoResponse
 import com.google.gson.*
 import java.lang.reflect.Type
@@ -10,7 +12,11 @@ import java.lang.reflect.Type
  * 这里是为了去掉返回结果中最外面的一层封装类：FlickrResponse
  *
  */
-class PhotoDeserializer : JsonDeserializer<PhotoResponse?> {
+class PhotoDeserializer(private val mUseGson: Boolean = true) : JsonDeserializer<PhotoResponse?> {
+
+    private var mGson: Gson = Gson()
+
+
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
@@ -20,6 +26,9 @@ class PhotoDeserializer : JsonDeserializer<PhotoResponse?> {
             if (json is JsonObject) {
                 val photosObject: JsonObject? = json.getAsJsonObject("photos")
                 if (photosObject != null) {
+                    if (mUseGson) {
+                        return mGson.fromJson(photosObject.toString(), PhotoResponse::class.java)
+                    }
                     val response = PhotoResponse()
                     response.page = photosObject.get("page").asInt
                     response.pages = photosObject.get("pages").asInt
@@ -27,9 +36,14 @@ class PhotoDeserializer : JsonDeserializer<PhotoResponse?> {
                     response.total = photosObject.get("total").asInt
                     val galleryList: MutableList<GalleryItem> = mutableListOf()
                     val photoArray: JsonArray = photosObject.getAsJsonArray("photo")
-                    //todo 这里要用的是 until;
+                    //这里要用的是 until;
                     for (i in 0 until photoArray.size()) {
                         val jsonElement: JsonElement = photoArray[i]
+                        if (mUseGson) {
+                            val item = mGson.fromJson(jsonElement.toString(), GalleryItem::class.java)
+                            galleryList.add(item)
+                            continue
+                        }
                         val galleryItem = GalleryItem()
                         val jsonObject = jsonElement as JsonObject
                         galleryItem.title = jsonObject.get("title").asString

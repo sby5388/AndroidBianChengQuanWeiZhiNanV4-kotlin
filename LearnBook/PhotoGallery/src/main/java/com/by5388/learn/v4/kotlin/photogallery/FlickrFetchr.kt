@@ -18,12 +18,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val TAG = "FlickrFetchr"
 
 class FlickrFetchr {
-    private val mFlickrApi: FlickrApi
+     val mFlickrApi: FlickrApi
 
     /**
      * 网络请求
@@ -47,6 +48,8 @@ class FlickrFetchr {
             // todo add custom Gson
             //.addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(mCustomGson))
+            //rxjava适配器
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             // 2021/7/14 添加了带过滤功能的客户端，替换默认的
             .client(client)
             .build()

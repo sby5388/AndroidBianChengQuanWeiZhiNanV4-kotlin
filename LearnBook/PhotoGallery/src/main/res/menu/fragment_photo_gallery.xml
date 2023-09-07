@@ -29,11 +29,39 @@
         android:checkable="true"
         android:title="@string/use_chrome_custom_tab"
         app:showAsAction="never|withText" />
+
+    <!-- 搜索方式-->
+    <group
+        android:id="@+id/menu_group_search_type"
+        android:checkableBehavior="single"
+        android:enabled="true"
+        android:orderInCategory="1">
+        <item
+            android:id="@+id/menu_photo_type_retrofit"
+            android:checkable="true"
+            android:checked="true"
+            android:title="使用retrofit原生模式" />
+        <item
+            android:id="@+id/menu_photo_type_rxjava"
+            android:checkable="true"
+            android:checked="false"
+            android:title="使用rxjava模式" />
+        <item
+            android:id="@+id/menu_photo_type_coroutines"
+            android:checkable="true"
+            android:checked="false"
+            android:title="使用协程模式" />
+
+
+    </group>
+
+
     <!-- 选择适配器 单选 -->
     <group
         android:id="@+id/menu_select_adapter"
         android:checkableBehavior="single"
-        android:enabled="true">
+        android:enabled="true"
+        android:orderInCategory="2">
         <item
             android:id="@+id/menu_adapter_default"
             android:checkable="true"

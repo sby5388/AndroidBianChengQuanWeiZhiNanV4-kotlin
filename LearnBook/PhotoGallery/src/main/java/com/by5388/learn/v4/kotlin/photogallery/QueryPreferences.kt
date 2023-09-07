@@ -15,6 +15,7 @@ object QueryPreferences {
     private const val PREF_LAST_RESULT_ID = "lastResultId"
     private const val PREF_IS_POLLING = "isPolling"
     private const val PREF_IS_CHROME_TAB = "useChromeCustomTab"
+    private const val PREF_SEARCH_TYPE = "search_type"
 
     private fun Context.preferences(): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(this)
@@ -74,6 +75,17 @@ object QueryPreferences {
         context.preferences().edit {
             putInt(PREF_ADAPTER_TYPE, type)
         }
+    }
+
+
+    fun setSearchType(context: Context, type: Int) {
+        context.preferences().edit {
+            putInt(PREF_SEARCH_TYPE, type)
+        }
+    }
+
+    fun getSearchType(context: Context, defaultType: Int): Int {
+        return context.preferences().getInt(PREF_SEARCH_TYPE, defaultType)
     }
 
 

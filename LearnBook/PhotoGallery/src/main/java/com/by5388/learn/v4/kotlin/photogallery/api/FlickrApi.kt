@@ -1,5 +1,6 @@
 package com.by5388.learn.v4.kotlin.photogallery.api
 
+import io.reactivex.Single
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -27,9 +28,24 @@ interface FlickrApi {
 
     /**
      * 根据关键字搜索图片
+     * 使用原始的retrofit
      */
     @GET("services/rest/?method=flickr.photos.search")
     fun searchPhotos(@Query("text") query: String): Call<PhotoResponse>
+
+    /**
+     * 根据关键字搜索图片
+     * 使用rxjava
+     */
+    @GET("services/rest/?method=flickr.photos.search")
+    fun searchPhotosRx(@Query("text") query: String): Single<PhotoResponse>
+
+    /**
+     * 根据关键字搜索图片
+     * 使用协程
+     */
+    @GET("services/rest/?method=flickr.photos.search")
+    suspend fun searchPhotosSuspend(@Query("text") query: String): PhotoResponse
 
 
     /**

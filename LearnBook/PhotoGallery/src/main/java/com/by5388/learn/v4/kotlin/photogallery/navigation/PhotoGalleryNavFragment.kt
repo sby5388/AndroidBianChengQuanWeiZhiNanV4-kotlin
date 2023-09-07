@@ -51,6 +51,9 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
     private var mMenuTypeGlide: MenuItem? = null
     private var mMenuTypePicasso: MenuItem? = null
     private var mMenuTypeFresco: MenuItem? = null
+    private lateinit var mMenuRetrofit: MenuItem
+    private lateinit var mMenuRxjava: MenuItem
+    private lateinit var mMenuCoroutines: MenuItem
 
     private lateinit var mThumbnailDownloader: ThumbnailDownloader<PhotoListHolder>
     private lateinit var mPhotoGalleryViewModel: PhotoGalleryViewModel
@@ -62,6 +65,8 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         get() = _binding!!
 
     private var mAdapterType = ADAPTER_TYPE_DEFAULT
+    private var mSearchType = SEARCH_TYPE_RETROFIT
+
     private val mGalleryClick: GalleryClick = object : GalleryClick {
         override fun onGalleryClick(item: GalleryItem?) {
             item ?: return
@@ -150,7 +155,7 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(queryText: String): Boolean {
                     Log.d(TAG, "QueryTextSubmit: $queryText")
-                    mPhotoGalleryViewModel.fetchPhotos(queryText)
+                    mPhotoGalleryViewModel.fetchPhotos(queryText,mSearchType)
                     //26.6 优化搜索栏
                     //关闭软键盘的方式1：失去焦点
                     searchView.clearFocus()
@@ -196,41 +201,55 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         mMenuTypePicasso = menu.findItem(R.id.menu_adapter_picasso)
         mMenuTypeFresco = menu.findItem(R.id.menu_adapter_fresco)
 
+        mMenuRetrofit = menu.findItem(R.id.menu_photo_type_retrofit)
+        mMenuRxjava = menu.findItem(R.id.menu_photo_type_rxjava)
+        mMenuCoroutines = menu.findItem(R.id.menu_photo_type_coroutines)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_item_clear -> {
-                mPhotoGalleryViewModel.fetchPhotos("")
-                true
+
+        return when (item) {
+            mMenuRetrofit -> saveSearchType(SEARCH_TYPE_RETROFIT)
+            mMenuRxjava -> saveSearchType(SEARCH_TYPE_RXJAVA)
+            mMenuCoroutines -> saveSearchType(SEARCH_TYPE_COROUTINES)
+
+            else -> {
+
+                when (item.itemId) {
+                    R.id.menu_item_clear -> {
+                        mPhotoGalleryViewModel.fetchPhotos("",mSearchType)
+                        true
+                    }
+                    R.id.menu_item_toggle_polling -> {
+                        togglePolling()
+                        requireActivity().invalidateOptionsMenu()
+                        true
+                    }
+                    R.id.menu_item_toggle_chrome_custom_tab -> {
+                        toggleUseChromeCustomTab()
+                        requireActivity().invalidateOptionsMenu()
+                        true
+                    }
+                    R.id.menu_adapter_default -> {
+                        updateAdapter(ADAPTER_TYPE_DEFAULT)
+                        true
+                    }
+                    R.id.menu_adapter_glide -> {
+                        updateAdapter(ADAPTER_TYPE_GLIDE)
+                        true
+                    }
+                    R.id.menu_adapter_picasso -> {
+                        updateAdapter(ADAPTER_TYPE_PICASSO)
+                        true
+                    }
+                    R.id.menu_adapter_fresco -> {
+                        updateAdapter(ADAPTER_TYPE_FRESCO)
+                        true
+                    }
+                    else -> super.onOptionsItemSelected(item)
+                }
             }
-            R.id.menu_item_toggle_polling -> {
-                togglePolling()
-                requireActivity().invalidateOptionsMenu()
-                true
-            }
-            R.id.menu_item_toggle_chrome_custom_tab -> {
-                toggleUseChromeCustomTab()
-                requireActivity().invalidateOptionsMenu()
-                true
-            }
-            R.id.menu_adapter_default -> {
-                updateAdapter(ADAPTER_TYPE_DEFAULT)
-                true
-            }
-            R.id.menu_adapter_glide -> {
-                updateAdapter(ADAPTER_TYPE_GLIDE)
-                true
-            }
-            R.id.menu_adapter_picasso -> {
-                updateAdapter(ADAPTER_TYPE_PICASSO)
-                true
-            }
-            R.id.menu_adapter_fresco -> {
-                updateAdapter(ADAPTER_TYPE_FRESCO)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -261,6 +280,16 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         mMenuTypeFresco?.isChecked = (mAdapterType == ADAPTER_TYPE_FRESCO)
 
 
+        mMenuRetrofit.isChecked = (mSearchType == SEARCH_TYPE_RETROFIT)
+        mMenuRetrofit.isEnabled = (mSearchType != SEARCH_TYPE_RETROFIT)
+
+        mMenuRxjava.isChecked = (mSearchType == SEARCH_TYPE_RXJAVA)
+        mMenuRxjava.isEnabled = (mSearchType != SEARCH_TYPE_RXJAVA)
+
+        mMenuCoroutines.isChecked = (mSearchType == SEARCH_TYPE_COROUTINES)
+        mMenuCoroutines.isEnabled = (mSearchType != SEARCH_TYPE_COROUTINES)
+
+
     }
 
     override fun onDestroyView() {
@@ -280,6 +309,10 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         const val ADAPTER_TYPE_GLIDE = 1
         const val ADAPTER_TYPE_PICASSO = 2
         const val ADAPTER_TYPE_FRESCO = 3
+
+        const val SEARCH_TYPE_RETROFIT = 0
+        const val SEARCH_TYPE_RXJAVA = 1
+        const val SEARCH_TYPE_COROUTINES = 2
     }
 
 
@@ -315,6 +348,16 @@ class PhotoGalleryNavFragment : BaseVisibleFragment() {
         mAdapterType = adapterType
         requireActivity().invalidateOptionsMenu()
 
+    }
+
+    private fun saveSearchType(searchType: Int): Boolean {
+        mSearchType = searchType
+        QueryPreferences.setSearchType(requireContext(), searchType)
+        return true
+    }
+
+    private fun getSearchType(): Int {
+        return QueryPreferences.getSearchType(requireContext(), SEARCH_TYPE_RETROFIT)
     }
 
 
