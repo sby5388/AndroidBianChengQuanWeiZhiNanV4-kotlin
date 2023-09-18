@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.by5388.learn.v4.kotlin.photogallery.navigation.PhotoGalleryNavigationActivity
 
 private const val TAG = "PollWorker"
 
@@ -61,7 +62,7 @@ class PollWorker(private val mContext: Context, workerParameters: WorkerParamete
      * 设置通知栏事件
      */
     private fun showNotification() {
-        val newIntent = PhotoGalleryActivity.newIntent(mContext)
+        val newIntent = mContext.newIntent(PhotoGalleryNavigationActivity::class.java)
         val flag =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             else PendingIntent.FLAG_UPDATE_CURRENT

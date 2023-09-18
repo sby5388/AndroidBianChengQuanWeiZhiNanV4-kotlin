@@ -16,10 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
+import com.by5388.learn.v4.kotlin.photogallery.navigation.PhotoGalleryNavFragment
 import java.util.concurrent.TimeUnit
 
 private const val POLL_WORK = "POLL_WORK"
-
+@Deprecated("使用Navigation", ReplaceWith("com.by5388.learn.v4.kotlin.photogallery.navigation.PhotoGalleryNavFragment"),)
 class PhotoGalleryFragment : VisibleFragment() {
     private lateinit var mMenuProgressBar: MenuItem
     private lateinit var mMenuItemTogglePolling: MenuItem

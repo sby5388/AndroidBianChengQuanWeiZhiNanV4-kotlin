@@ -1,10 +1,9 @@
 package com.by5388.learn.v4.kotlin.photogallery
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
+@Deprecated("see [com.by5388.learn.v4.kotlin.photogallery.navigation.PhotoGalleryNavigationActivity]")
 class PhotoGalleryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +22,7 @@ class PhotoGalleryActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        fun newIntent(context: Context): Intent {
-            return Intent(context, PhotoGalleryActivity::class.java);
-        }
+    fun test() {
+        println("test---")
     }
 }
