@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shenby.shortcuts">
+
+    <queries>
+        <package android:name="com.android.settings" />
+        <intent>
+            <action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" />
+            <data android:scheme="package" />
+        </intent>
+
+    </queries>
+
+
+    <application>
+
+        <provider
+            android:name=".ShortcutsProvider"
+            android:authorities="com.shenby.shortcuts.ShortcutsProvider"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
+
+</manifest>
